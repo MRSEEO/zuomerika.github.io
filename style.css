@@ -21,7 +21,7 @@ background-color: white; /* Ensure the iframe has a white background */
     --radius-sm: 10px;
 }
 
-/* ===== RESET ===== */
+/* ===== RESET & BASE ===== */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -43,6 +43,20 @@ body {
     color: var(--text-primary);
     line-height: 1.7;
     font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Оптимизация производительности анимаций */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 h1, h2, h3, h4 {
@@ -84,8 +98,11 @@ button {
     padding: 16px 0;
     background: rgba(255, 249, 240, 0.95);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 1000;
     border-bottom: 2px solid var(--accent-pink);
+    will-change: scroll-position;
+    contain: layout style;
 }
 
 .nav-inner {
@@ -297,6 +314,7 @@ section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
+    will-change: scroll-position;
 }
 
 .gallery-item {
@@ -307,7 +325,9 @@ section {
     cursor: pointer;
     box-shadow: 0 8px 25px var(--shadow);
     border: 3px solid var(--white);
-    transition: 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+    contain: layout style;
 }
 
 .gallery-item:hover {
@@ -320,6 +340,7 @@ section {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    will-change: transform;
 }
 
 .gallery-item:hover img {
