@@ -105,34 +105,56 @@ const translations = {
 
 let currentLang = 'ru';
 
+// Кэширование DOM элементов
+let domCache = {};
+
+function cacheDOM() {
+    domCache = {
+        navMenu: document.getElementById('navMenu'),
+        mobileToggle: document.getElementById('mobileToggle'),
+        langBtns: document.querySelectorAll('.lang-btn'),
+        i18nElements: document.querySelectorAll('[data-i18n]'),
+        priceElements: document.querySelectorAll('.price-amount'),
+        galleryGrid: document.getElementById('galleryGrid'),
+        lightbox: document.getElementById('lightbox'),
+        lightboxClose: document.getElementById('lightboxClose'),
+        lightboxImage: document.getElementById('lightboxImage')
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    cacheDOM();
     initGallery();
     initLanguage();
     initNav();
     initLightbox();
     updatePrices();
-});
+}, { once: true });
 
 // 🖼️ Галерея
 function initGallery() {
-    const grid = document.getElementById('galleryGrid');
-    grid.innerHTML = '';
+    const grid = domCache.galleryGrid;
+    if (!grid) return;
+    
+    const fragment = document.createDocumentFragment();
     
     galleryData.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gallery-item';
         div.innerHTML = `<img src="${item.src}" alt="${item.title}" loading="lazy">`;
         div.addEventListener('click', () => openLightbox(item.src));
-        grid.appendChild(div);
+        fragment.appendChild(div);
     });
+    
+    grid.appendChild(fragment);
 }
 
 // 🌐 Язык
 function initLanguage() {
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+    domCache.langBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             currentLang = btn.dataset.lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            domCache.langBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             updateLanguage();
             updatePrices();
@@ -141,7 +163,7 @@ function initLanguage() {
 }
 
 function updateLanguage() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
+    domCache.i18nElements.forEach(el => {
         const key = el.dataset.i18n;
         if (translations[currentLang]?.[key]) {
             el.textContent = translations[currentLang][key];
@@ -151,7 +173,7 @@ function updateLanguage() {
 }
 
 function updatePrices() {
-    document.querySelectorAll('.price-amount').forEach(el => {
+    domCache.priceElements.forEach(el => {
         const priceRu = el.dataset.priceRu;
         const priceEn = el.dataset.priceEn;
         const price = currentLang === 'ru' ? priceRu : priceEn;
@@ -163,17 +185,19 @@ function updatePrices() {
 
 // 🧭 Навигация
 function initNav() {
-    const menu = document.getElementById('navMenu');
-    const toggle = document.getElementById('mobileToggle');
+    const menu = domCache.navMenu;
+    const toggle = domCache.mobileToggle;
+
+    if (!toggle || !menu) return;
 
     toggle.addEventListener('click', () => {
         menu.classList.toggle('active');
-    });
+    }, { passive: true });
 
     menu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             menu.classList.remove('active');
-        });
+        }, { passive: true });
     });
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -183,15 +207,17 @@ function initNav() {
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-        });
+        }, { passive: false });
     });
 }
 
 // 🔍 Lightbox
 function initLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    const close = document.getElementById('lightboxClose');
-    const img = document.getElementById('lightboxImage');
+    const lightbox = domCache.lightbox;
+    const close = domCache.lightboxClose;
+    const img = domCache.lightboxImage;
+
+    if (!lightbox || !close || !img) return;
 
     window.openLightbox = (src) => {
         img.src = src;
@@ -199,13 +225,13 @@ function initLightbox() {
         document.body.style.overflow = 'hidden';
     };
 
-    close.addEventListener('click', closeLightbox);
+    close.addEventListener('click', closeLightbox, { passive: true });
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
-    });
+    }, { passive: true });
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeLightbox();
-    });
+    }, { passive: true });
 
     function closeLightbox() {
         lightbox.classList.remove('active');
