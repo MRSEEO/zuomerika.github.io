@@ -326,3 +326,156 @@ function initLightbox() {
         if (e.key === 'Escape') closeLightbox();
     }, { passive: true });
 }
+
+
+// 🔍 Lightbox с зумом
+let currentScale = 1;
+let isDragging = false;
+let startX, startY, translateX = 0, translateY = 0;
+
+function initLightbox() {
+    const lightbox = domCache.lightbox;
+    const close = domCache.lightboxClose;
+    const img = domCache.lightboxImage;
+    const imgContainer = lightbox.querySelector('.lightbox-content') || lightbox; // Контейнер для трансформации
+
+    if (!lightbox || !close || !img) return;
+
+    // Сброс состояния при открытии
+    window.openLightbox = function(src) {
+        currentScale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateTransform();
+        
+        img.src = src;
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    // Кнопка закрытия
+    close.addEventListener('click', closeLightbox, { passive: true });
+    
+    // Закрытие по клику вне картинки
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target === imgContainer) closeLightbox();
+    }, { passive: true });
+    
+    // Закрытие по Esc
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    }, { passive: true });
+
+    // Зум колесиком мыши
+    lightbox.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        
+        const zoomSpeed = 0.1;
+        const delta = e.deltaY > 0 ? -zoomSpeed : zoomSpeed;
+        
+        let newScale = currentScale + delta;
+        // Ограничения зума
+        newScale = Math.max(0.5, Math.min(newScale, 5)); 
+        
+        currentScale = newScale;
+        
+        // Если уменьшаем до 1 или меньше, сбрасываем позицию в центр
+        if (currentScale <= 1) {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+        }
+        
+        updateTransform();
+    }, { passive: false });
+
+    // Перетаскивание (Pan)
+    img.addEventListener('mousedown', (e) => {
+        if (currentScale <= 1) return; // Не перетаскивать, если не увеличено
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        img.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging || currentScale <= 1) return;
+        e.preventDefault();
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform();
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        if (img) img.style.cursor = 'zoom-in';
+    });
+
+    // Поддержка тач-событий для мобильных
+    let initialPinchDistance = null;
+
+    img.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+        } else if (e.touches.length === 2) {
+            initialPinchDistance = getDistance(e.touches);
+        }
+    }, { passive: true });
+
+    img.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDragging && currentScale > 1) {
+            e.preventDefault(); // Предотвращаем скролл страницы при перетаскивании
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
+            updateTransform();
+        } else if (e.touches.length === 2 && initialPinchDistance) {
+            e.preventDefault();
+            const currentDistance = getDistance(e.touches);
+            const diff = currentDistance - initialPinchDistance;
+            
+            let newScale = currentScale + (diff * 0.005);
+            newScale = Math.max(0.5, Math.min(newScale, 5));
+            
+            if (newScale <= 1) {
+                currentScale = 1;
+                translateX = 0;
+                translateY = 0;
+            } else {
+                currentScale = newScale;
+            }
+            updateTransform();
+        }
+    }, { passive: false });
+
+    img.addEventListener('touchend', () => {
+        isDragging = false;
+        initialPinchDistance = null;
+    });
+
+    function updateTransform() {
+        img.style.transformOrigin = 'center center';
+        img.style.transition = isDragging ? 'none' : 'transform 0.2s ease';
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        // Сброс трансформаций после закрытия
+        setTimeout(() => {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            img.style.transform = 'none';
+        }, 200);
+    }
+}
+
+// Вспомогательная функция для расчета расстояния между двумя точками (для пинча)
+function getDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
