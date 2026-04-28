@@ -148,18 +148,46 @@ function initGallery() {
     
     grid.appendChild(fragment);
     
-    // Добавляем обработчики кликов для изображений в секции цен
+    // Добавляем обработчики кликов для всех изображений в секции цен
+    addPricingImageHandlers();
+}
+
+// Обработчики для изображений в прайсинге
+function addPricingImageHandlers() {
+    // Обработчик для всех изображений в баннерах
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
+        img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
             e.stopPropagation();
             openLightbox(img.src);
         });
     });
     
-    // Обработчик для контейнеров баннеров
+    // Обработчик для контейнеров баннеров (если клик по контейнеру)
     document.querySelectorAll('.pricing-image-banner').forEach(banner => {
+        banner.style.cursor = 'pointer';
         banner.addEventListener('click', () => {
             const img = banner.querySelector('img');
+            if (img) {
+                openLightbox(img.src);
+            }
+        });
+    });
+    
+    // Обработчик для изображений в карточках товаров (headshot, halfbody, fullbody)
+    document.querySelectorAll('.price-img img').forEach(img => {
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openLightbox(img.src);
+        });
+    });
+    
+    // Обработчик для контейнеров price-img
+    document.querySelectorAll('.price-img').forEach(container => {
+        container.style.cursor = 'pointer';
+        container.addEventListener('click', () => {
+            const img = container.querySelector('img');
             if (img) {
                 openLightbox(img.src);
             }
