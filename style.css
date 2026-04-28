@@ -413,27 +413,33 @@ section {
 
 .price-item {
     display: flex;
-    gap: 16px;
+    gap: 20px;
     align-items: center;
-    padding: 16px;
+    padding: 20px;
     background: var(--bg-primary);
     border-radius: var(--radius-md);
     transition: 0.3s ease;
 }
 
 .price-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px var(--shadow);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px var(--shadow);
 }
 
 .price-img {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     border-radius: var(--radius-sm);
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
-    border: 2px solid var(--white);
+    border: 3px solid var(--white);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.price-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px var(--shadow);
 }
 
 .price-img img {
@@ -689,7 +695,8 @@ section {
     }
 
     .pricing-image-banner {
-        height: 120px;
+        height: auto;
+        min-height: 150px;
     }
 
     .social-link {
