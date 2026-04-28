@@ -139,10 +139,26 @@ function closeLightbox() {
     document.body.style.overflow = '';
 }
 
+// Глобальная функция для кнопок слайдера (вызывается из HTML onclick)
+window.moveSlide = function(btn, direction) {
+    const slider = btn.closest('.showcase-slider');
+    if (!slider) return;
+    
+    const track = slider.querySelector('.slider-track');
+    if (!track) return;
+    
+    const scrollAmount = track.clientWidth * 0.8; // Прокручиваем на 80% ширины
+    
+    track.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     cacheDOM();
     initGallerySlider();
-    initProductSliders(); // Инициализация слайдеров для товаров (VTuber и др.)
+    initProductSliders(); // Инициализация слайдеров в прайсинге
     initLanguage();
     initNav();
     initLightbox();
@@ -150,11 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     setTimeout(() => {
         addAllImageHandlers();
-        addPricingImageHandlers();
     }, 100);
 }, { once: true });
 
-// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР (ГЛАВНАЯ)
+// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР (Главная секция)
 function initGallerySlider() {
     const track = domCache.galleryTrack;
     const container = domCache.galleryContainer;
@@ -165,7 +180,7 @@ function initGallerySlider() {
 
     // Рендер слайдов
     const fragment = document.createDocumentFragment();
-    galleryData.forEach((item, index) => {
+    galleryData.forEach((item) => {
         const slide = document.createElement('div');
         slide.className = 'gallery-slide';
         slide.innerHTML = `
@@ -174,106 +189,118 @@ function initGallerySlider() {
                 <div class="slide-title">${item.title}</div>
             </div>
         `;
+        // Клик по картинке внутри слайда
         slide.querySelector('img').addEventListener('click', (e) => {
             e.stopPropagation();
             openLightbox(item.src);
         });
+        // Клик по всему слайду тоже открывает
         slide.addEventListener('click', () => openLightbox(item.src));
         fragment.appendChild(slide);
     });
     track.appendChild(fragment);
 
-    setupSliderLogic(container, track, prevBtn, nextBtn);
-}
-
-// 🛍️ СЛАЙДЕРЫ ДЛЯ ТОВАРОВ (VTuber, PNG и т.д.)
-function initProductSliders() {
-    // Находим все контейнеры товаров, где есть галерея
-    const showcases = document.querySelectorAll('.product-showcase');
-    
-    showcases.forEach(showcase => {
-        const track = showcase.querySelector('.slider-track');
-        const prevBtn = showcase.querySelector('.slider-prev');
-        const nextBtn = showcase.querySelector('.slider-next');
-        
-        if (track && (prevBtn || nextBtn)) {
-            setupSliderLogic(track.parentElement || showcase, track, prevBtn, nextBtn);
-            
-            // Добавляем обработчики кликов для картинок внутри слайдера товара
-            track.querySelectorAll('img').forEach(img => {
-                img.style.cursor = 'pointer';
-                img.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openLightbox(img.src);
-                });
-            });
-        }
-    });
-}
-
-// Общая логика слайдера (кнопки + свайп)
-function setupSliderLogic(container, track, prevBtn, nextBtn) {
-    let isDragging = false;
-    let startPos = 0;
-    let scrollLeft = 0;
-    let animationFrameId;
-
-    const getSlideWidth = () => {
-        const slide = track.querySelector('.slide-item, .gallery-slide, img');
-        return slide ? slide.clientWidth + 20 : 300; // 20px отступ
-    };
-
-    const scrollBySlide = (direction) => {
-        const slideWidth = getSlideWidth();
-        const scrollAmount = slideWidth * direction;
-        
-        track.scrollTo({
-            left: track.scrollLeft + scrollAmount,
+    // Навигация кнопками
+    const scrollSlide = (direction) => {
+        const scrollAmount = container.clientWidth * 0.8;
+        track.scrollBy({
+            left: direction * scrollAmount,
             behavior: 'smooth'
         });
     };
 
-    if (prevBtn) prevBtn.addEventListener('click', () => scrollBySlide(-1));
-    if (nextBtn) nextBtn.addEventListener('click', () => scrollBySlide(1));
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollSlide(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollSlide(1));
 
-    // События мыши/тача для свайпа
-    const startDrag = (e) => {
+    // Drag & Drop свайп мышкой
+    let isDragging = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    container.addEventListener('mousedown', (e) => {
         isDragging = true;
-        startPos = e.pageX || e.touches[0].pageX;
-        scrollLeft = track.scrollLeft;
-        track.style.cursor = 'grabbing';
-        track.style.scrollBehavior = 'auto'; // Отключаем плавность для драга
-    };
+        startX = e.pageX - container.offsetLeft;
+        scrollLeft = container.scrollLeft;
+        container.style.cursor = 'grabbing';
+    });
 
-    const endDrag = () => {
+    container.addEventListener('mouseleave', () => {
         isDragging = false;
-        track.style.cursor = 'grab';
-        track.style.scrollBehavior = 'smooth';
-    };
+        container.style.cursor = 'grab';
+    });
 
-    const moveDrag = (e) => {
+    container.addEventListener('mouseup', () => {
+        isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    container.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
         e.preventDefault();
-        const x = e.pageX || e.touches[0].pageX;
-        const walk = (x - startPos) * 2;
-        track.scrollLeft = scrollLeft - walk;
-    };
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - startX) * 2; 
+        container.scrollLeft = scrollLeft - walk;
+    });
+}
 
-    // Mouse events
-    container.addEventListener('mousedown', startDrag);
-    container.addEventListener('mouseleave', endDrag);
-    container.addEventListener('mouseup', endDrag);
-    container.addEventListener('mousemove', moveDrag);
+// 🛍️ СЛАЙДЕРЫ ТОВАРОВ (VTuber, PNG и т.д.)
+function initProductSliders() {
+    const sliders = document.querySelectorAll('.showcase-slider');
+    
+    sliders.forEach(slider => {
+        const track = slider.querySelector('.slider-track');
+        if (!track) return;
 
-    // Touch events
-    container.addEventListener('touchstart', startDrag, { passive: true });
-    container.addEventListener('touchend', endDrag);
-    container.addEventListener('touchmove', moveDrag, { passive: false });
+        // Поддержка свайпа мышью
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeft = 0;
+
+        track.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX - track.offsetLeft;
+            scrollLeft = track.scrollLeft;
+            track.style.cursor = 'grabbing';
+        });
+
+        track.addEventListener('mouseleave', () => {
+            isDragging = false;
+            track.style.cursor = 'grab';
+        });
+
+        track.addEventListener('mouseup', () => {
+            isDragging = false;
+            track.style.cursor = 'grab';
+        });
+
+        track.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - track.offsetLeft;
+            const walk = (x - startX) * 2;
+            track.scrollLeft = scrollLeft - walk;
+        });
+
+        // Поддержка скролла колесиком (горизонтально)
+        track.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            track.scrollLeft += e.deltaY;
+        }, { passive: false });
+
+        // Клик по изображению внутри слайдера
+        track.querySelectorAll('img').forEach(img => {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openLightbox(img.src);
+            });
+        });
+    });
 }
 
 // Обработчики для всех изображений на сайте
 function addAllImageHandlers() {
-    // Баннеры прайса
+    // Баннеры прайса (старый формат)
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -290,25 +317,21 @@ function addAllImageHandlers() {
         });
     });
     
-    // Карточки товаров (если не в слайдере)
+    // Карточки товаров (старый формат)
     document.querySelectorAll('.price-img img').forEach(img => {
-        if (!img.closest('.slider-track')) { // Пропускаем те, что уже в слайдере
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openLightbox(img.src);
-            });
-        }
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openLightbox(img.src);
+        });
     });
     
     document.querySelectorAll('.price-img').forEach(container => {
-        if (!container.querySelector('.slider-track')) {
-            container.style.cursor = 'pointer';
-            container.addEventListener('click', () => {
-                const img = container.querySelector('img');
-                if (img) openLightbox(img.src);
-            });
-        }
+        container.style.cursor = 'pointer';
+        container.addEventListener('click', () => {
+            const img = container.querySelector('img');
+            if (img) openLightbox(img.src);
+        });
     });
     
     // Hero и About
@@ -323,10 +346,6 @@ function addAllImageHandlers() {
         aboutImg.style.cursor = 'pointer';
         aboutImg.addEventListener('click', () => openLightbox(aboutImg.src));
     }
-}
-
-function addPricingImageHandlers() {
-    console.log("Pricing handlers ready");
 }
 
 // 🌐 Язык
@@ -395,6 +414,7 @@ function initLightbox() {
     let isDragging = false;
     let startX, startY;
 
+    // Сброс трансформации при открытии
     const resetTransform = () => {
         scale = 1;
         translateX = 0;
@@ -429,7 +449,6 @@ function initLightbox() {
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
         img.style.cursor = 'grabbing';
-        e.stopPropagation(); // Чтобы не срабатывал клик по лайтбоксу
     });
 
     window.addEventListener('mousemove', (e) => {
