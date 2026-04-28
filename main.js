@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initNav();
     initLightbox();
     updatePrices();
+    // Добавляем обработчики кликов для всех изображений после полной загрузки DOM
+    addAllImageHandlers();
 }, { once: true });
 
 // 🖼️ Галерея
@@ -152,9 +154,9 @@ function initGallery() {
     addPricingImageHandlers();
 }
 
-// Обработчики для изображений в прайсинге
-function addPricingImageHandlers() {
-    // Обработчик для всех изображений в баннерах
+// Обработчики для всех изображений на сайте
+function addAllImageHandlers() {
+    // 1. Обработчик для всех изображений в баннерах (VTuber, PNG, Animated, Emoji, Background)
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -163,7 +165,7 @@ function addPricingImageHandlers() {
         });
     });
     
-    // Обработчик для контейнеров баннеров (если клик по контейнеру)
+    // 2. Обработчик для контейнеров баннеров
     document.querySelectorAll('.pricing-image-banner').forEach(banner => {
         banner.style.cursor = 'pointer';
         banner.addEventListener('click', () => {
@@ -174,7 +176,7 @@ function addPricingImageHandlers() {
         });
     });
     
-    // Обработчик для изображений в карточках товаров (headshot, halfbody, fullbody)
+    // 3. Обработчик для изображений в карточках товаров (headshot, halfbody, fullbody)
     document.querySelectorAll('.price-img img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -183,7 +185,7 @@ function addPricingImageHandlers() {
         });
     });
     
-    // Обработчик для контейнеров price-img
+    // 4. Обработчик для контейнеров price-img
     document.querySelectorAll('.price-img').forEach(container => {
         container.style.cursor = 'pointer';
         container.addEventListener('click', () => {
@@ -193,6 +195,24 @@ function addPricingImageHandlers() {
             }
         });
     });
+    
+    // 5. Обработчик для hero изображения
+    const heroImg = document.querySelector('.hero-image img');
+    if (heroImg) {
+        heroImg.style.cursor = 'pointer';
+        heroImg.addEventListener('click', () => {
+            openLightbox(heroImg.src);
+        });
+    }
+    
+    // 6. Обработчик для about изображения
+    const aboutImg = document.querySelector('.about-image img');
+    if (aboutImg) {
+        aboutImg.style.cursor = 'pointer';
+        aboutImg.addEventListener('click', () => {
+            openLightbox(aboutImg.src);
+        });
+    }
 }
 
 // 🌐 Язык
