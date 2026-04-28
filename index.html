@@ -66,13 +66,16 @@
     </section>
 
     <!-- Gallery -->
-    <section class="gallery" id="gallery">
-        <div class="container">
-            <div class="section-header">
-                <h2 data-i18n="gallery_title">My Works</h2>
-                <p data-i18n="gallery_subtitle">A selection of artworks</p>
+    <section id="gallery" class="gallery-section">
+        <h2 data-i18n="gallery_title">Мои работы</h2>
+        <p class="section-subtitle" data-i18n="gallery_subtitle">Листайте работы</p>
+        
+        <div id="galleryContainer">
+            <button id="galleryPrev" class="gallery-nav-btn">&#10094;</button>
+            <div id="galleryTrack" class="gallery-track">
+                <!-- Слайды будут добавлены через JS -->
             </div>
-            <div class="gallery-grid" id="galleryGrid"></div>
+            <button id="galleryNext" class="gallery-nav-btn">&#10095;</button>
         </div>
     </section>
 
