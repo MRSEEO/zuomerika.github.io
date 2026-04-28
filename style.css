@@ -1,21 +1,21 @@
 body {
-background-color: white; /* Ensure the iframe has a white background */
+    background-color: white; /* Ensure the iframe has a white background */
 }
 
 /* ===== VARIABLES ===== */
 :root {
-    --bg-primary: #F5E6D3;
-    --bg-secondary: #FFE5D0;
-    --bg-card: #FFF9F0;
-    --text-primary: #6B5B4A;
-    --text-muted: #9A8B7C;
-    --accent-pink: #af884c;
-    --accent-peach: #FFD5A8;
-    --accent-mint: #B8E8D0;
-    --cta: #7e5734;
-    --white: #FFFFFF;
-    --shadow: rgba(107, 91, 74, 0.08);
-    --shadow-hover: rgba(107, 91, 74, 0.15);
+    --bg-primary: #F5D7B1;
+    --bg-secondary: #E8C99E;
+    --bg-card: #F9F3E8;
+    --text-primary: #3D2B1F;
+    --text-muted: #7A5C42;
+    --accent-pink: #C4794A;
+    --accent-peach: #E89F5D;
+    --accent-mint: #D4A574;
+    --cta: #A66D3F;
+    --white: #F5F5F0;
+    --shadow: rgba(61, 43, 31, 0.1);
+    --shadow-hover: rgba(61, 43, 31, 0.2);
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 10px;
@@ -309,45 +309,100 @@ section {
     font-weight: 500;
 }
 
-/* ===== GALLERY ===== */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    will-change: scroll-position;
-}
-
-.gallery-item {
+/* ===== GALLERY SLIDER ===== */
+#galleryContainer {
     position: relative;
-    aspect-ratio: 1;
-    border-radius: var(--radius-md);
+    width: 100%;
     overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 8px 25px var(--shadow);
-    border: 3px solid var(--white);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 20px 0;
+}
+
+#galleryTrack {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    padding: 10px;
     will-change: transform;
-    contain: layout style;
 }
 
-.gallery-item:hover {
+.gallery-slide {
+    flex: 0 0 auto;
+    width: 300px;
+    height: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a1a;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-slide:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px var(--shadow-hover);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
 }
 
-.gallery-item img {
+.slide-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide-content img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-    will-change: transform;
+    display: block;
 }
 
-.gallery-item:hover img {
-    transform: scale(1.08);
+.slide-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 15px 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* ===== PRICING ===== */
+.gallery-slide:hover .slide-title {
+    opacity: 1;
+}
+
+.gallery-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.gallery-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.1);
+}
+
+#galleryPrev { left: 10px; }
+#galleryNext { right: 10px; }
+
+/* ===== PRICING & PRODUCT SHOWCASE ===== */
 .pricing {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -380,6 +435,135 @@ section {
     flex-shrink: 0;
 }
 
+/* Стили для нового макета "Слева слайдер - Справа текст" */
+.product-showcase {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+    margin-bottom: 20px;
+}
+
+.showcase-slider {
+    flex: 1;
+    min-width: 0; /* Fix flex item overflow */
+    position: relative;
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 3px solid var(--white);
+    display: flex;
+    align-items: center;
+}
+
+.slider-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    width: 100%;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+.slider-track::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.slide-item {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    height: 300px; /* Фиксированная высота для превью */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    cursor: pointer;
+}
+
+.slide-item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Показываем изображение целиком */
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.slider-nav:hover {
+    background: var(--white);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-nav.prev { left: 10px; }
+.slider-nav.next { right: 10px; }
+
+.showcase-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+}
+
+.showcase-info h3 {
+    font-size: 1.4rem;
+    color: var(--cta);
+    margin-bottom: 5px;
+}
+
+.showcase-info p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.price-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+}
+
+.price-row span:first-child {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.price-amount {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    color: var(--cta);
+}
+
+/* Старые стили прайсинга (оставляем для совместимости, если где-то используются) */
 .pricing-image-banner {
     width: 100%;
     border-radius: var(--radius-md);
@@ -465,14 +649,6 @@ section {
     text-align: right;
 }
 
-.price-amount {
-    font-family: 'Fredoka', sans-serif;
-    font-size: 1.5rem;
-    color: var(--cta);
-    font-weight: 600;
-}
-
-/* Compact pricing items */
 .price-item-compact {
     display: flex;
     justify-content: space-between;
@@ -629,6 +805,7 @@ section {
     max-width: 95%;
     max-height: 90vh;
     border-radius: var(--radius-md);
+    transition: transform 0.1s ease; /* Плавность для зума */
 }
 
 .lightbox-close {
@@ -663,8 +840,19 @@ section {
         display: flex;
     }
 
-    .about-content {
+    .about-content,
+    .product-showcase {
         grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .showcase-slider {
+        order: 1; /* Картинки сверху на мобильном */
+        height: 250px;
+    }
+    
+    .showcase-info {
+        order: 2;
     }
 
     .about, .pricing, .contact {
@@ -708,104 +896,7 @@ section {
         width: 16px;
         height: 16px;
     }
-}
-
-/* Стили для слайдера галереи */
-#galleryContainer {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    padding: 20px 0;
-}
-
-#galleryTrack {
-    display: flex;
-    gap: 20px;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    padding: 10px;
-    will-change: transform;
-}
-
-.gallery-slide {
-    flex: 0 0 auto;
-    width: 300px; /* Ширина слайда */
-    height: 400px; /* Высота слайда */
-    border-radius: 12px;
-    overflow: hidden;
-    background: #1a1a1a;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.gallery-slide:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-}
-
-.slide-content {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.slide-content img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Заполняет слайд, обрезая лишнее, но сохраняя пропорции */
-    display: block;
-}
-
-.slide-title {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 40px 15px 15px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.gallery-slide:hover .slide-title {
-    opacity: 1;
-}
-
-/* Кнопки навигации слайдера */
-.gallery-nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-}
-
-.gallery-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-50%) scale(1.1);
-}
-
-#galleryPrev { left: 10px; }
-#galleryNext { right: 10px; }
-
-/* Адаптив для слайдера */
-@media (max-width: 768px) {
+    
     .gallery-slide {
         width: 260px;
         height: 340px;

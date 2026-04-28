@@ -41,7 +41,7 @@
             <h1 class="hero-title">Zuomerika</h1>
             <p class="hero-subtitle" data-i18n="hero_subtitle">Digital Artist & Illustrator</p>
             <div class="hero-image">
-                <img src="images/hero.jpg" fetchpriority="high" loading="eager">
+                <img src="images/hero.jpg" fetchpriority="high" loading="eager" alt="Hero Art">
             </div>
         </div>
     </section>
@@ -50,7 +50,7 @@
     <section class="about" id="about">
         <div class="container about-content">
             <div class="about-image">
-                <img src="images/about.jpg" loading="lazy">
+                <img src="images/about.jpg" loading="lazy" alt="About Zuomerika">
             </div>
             <div class="about-text">
                 <h2 data-i18n="about_title">About Me</h2>
@@ -67,15 +67,19 @@
 
     <!-- Gallery -->
     <section id="gallery" class="gallery-section">
-        <h2 data-i18n="gallery_title">Мои работы</h2>
-        <p class="section-subtitle" data-i18n="gallery_subtitle">Листайте работы</p>
-        
-        <div id="galleryContainer">
-            <button id="galleryPrev" class="gallery-nav-btn">&#10094;</button>
-            <div id="galleryTrack" class="gallery-track">
-                <!-- Слайды будут добавлены через JS -->
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="gallery_title">Мои работы</h2>
+                <p class="section-subtitle" data-i18n="gallery_subtitle">Листайте работы</p>
             </div>
-            <button id="galleryNext" class="gallery-nav-btn">&#10095;</button>
+            
+            <div id="galleryContainer">
+                <button id="galleryPrev" class="gallery-nav-btn">&#10094;</button>
+                <div id="galleryTrack" class="gallery-track">
+                    <!-- Слайды будут добавлены через JS -->
+                </div>
+                <button id="galleryNext" class="gallery-nav-btn">&#10095;</button>
+            </div>
         </div>
     </section>
 
@@ -94,7 +98,7 @@
                 <div class="pricing-list">
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/sketch-head.jpg" loading="lazy">
+                            <img src="images/sketch-head.jpg" loading="lazy" alt="Headshot Sketch">
                             <span class="price-label" data-i18n="headshot">Headshot</span>
                         </div>
                         <div class="price-value">
@@ -103,7 +107,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/sketch-half.jpg" loading="lazy">
+                            <img src="images/sketch-half.jpg" loading="lazy" alt="Halfbody Sketch">
                             <span class="price-label" data-i18n="halfbody">Halfbody</span>
                         </div>
                         <div class="price-value">
@@ -112,7 +116,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/sketch-full.jpg" loading="lazy">
+                            <img src="images/sketch-full.jpg" loading="lazy" alt="Fullbody Sketch">
                             <span class="price-label" data-i18n="fullbody">Fullbody</span>
                         </div>
                         <div class="price-value">
@@ -132,7 +136,7 @@
                 <div class="pricing-list">
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/line-head.png" loading="lazy">
+                            <img src="images/line-head.png" loading="lazy" alt="Headshot Lineart">
                             <span class="price-label" data-i18n="headshot">Headshot</span>
                         </div>
                         <div class="price-value">
@@ -141,7 +145,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/line-half.jpg" loading="lazy">
+                            <img src="images/line-half.jpg" loading="lazy" alt="Halfbody Lineart">
                             <span class="price-label" data-i18n="halfbody">Halfbody</span>
                         </div>
                         <div class="price-value">
@@ -150,7 +154,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/line-full.jpg" loading="lazy">
+                            <img src="images/line-full.jpg" loading="lazy" alt="Fullbody Lineart">
                             <span class="price-label" data-i18n="fullbody">Fullbody</span>
                         </div>
                         <div class="price-value">
@@ -170,7 +174,7 @@
                 <div class="pricing-list">
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/render-head.jpg" loading="lazy">
+                            <img src="images/render-head.jpg" loading="lazy" alt="Headshot Render">
                             <span class="price-label" data-i18n="headshot">Headshot</span>
                         </div>
                         <div class="price-value">
@@ -179,7 +183,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/render-half.jpg" loading="lazy">
+                            <img src="images/render-half.jpg" loading="lazy" alt="Halfbody Render">
                             <span class="price-label" data-i18n="halfbody">Halfbody</span>
                         </div>
                         <div class="price-value">
@@ -188,7 +192,7 @@
                     </div>
                     <div class="price-item">
                         <div class="price-img">
-                            <img src="images/render-full.jpg" loading="lazy">
+                            <img src="images/render-full.jpg" loading="lazy" alt="Fullbody Render">
                             <span class="price-label" data-i18n="fullbody">Fullbody</span>
                         </div>
                         <div class="price-value">
@@ -198,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- VTuber Models -->
+            <!-- VTuber Models (NEW LAYOUT) -->
             <div class="pricing-category">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -208,40 +212,49 @@
                     </svg>
                     VTuber Models
                 </h3>
-                <div class="pricing-image-banner vtuber-banner">
-                    <img src="images/vtuber-banner.jpg" loading="lazy">
-                </div>
-                <div class="pricing-image-banner vtuber-banner">
-                    <img src="images/vtuber-banner2.jpg" loading="lazy">
-                </div>
-                <div class="pricing-image-banner vtuber-banner">
-                    <img src="images/vtuber-banner3.png" loading="lazy">
-                </div>
-                <div class="pricing-list compact">
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="vtuber_half">Halfbody</span>
-                        <span class="price-amount" data-price-ru="37 000" data-price-en="400">$400</span>
+                
+                <div class="product-showcase">
+                    <!-- Slider Left -->
+                    <div class="showcase-slider">
+                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <div class="slider-track">
+                            <div class="slide-item"><img src="images/vtuber-banner.jpg" alt="VTuber Example 1" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/vtuber-banner2.jpg" alt="VTuber Example 2" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/vtuber-banner3.png" alt="VTuber Example 3" loading="lazy"></div>
+                        </div>
+                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
                     </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="vtuber_full">Fullbody</span>
-                        <span class="price-amount" data-price-ru="55 500" data-price-en="600">$600</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="vtuber_chibi">Chibi</span>
-                        <span class="price-amount" data-price-ru="32 400" data-price-en="350">$350</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="vtuber_mascot">Mascot</span>
-                        <span class="price-amount" data-price-ru="9 300" data-price-en="100">$100</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="vtuber_assets">Assets</span>
-                        <span class="price-amount" data-i18n="ask">Ask</span>
+
+                    <!-- Info Right -->
+                    <div class="showcase-info">
+                        <p>Custom VTuber models designed for streaming and content creation.</p>
+                        <div class="price-list">
+                            <div class="price-row">
+                                <span data-i18n="vtuber_half">Halfbody</span>
+                                <span class="price-amount" data-price-ru="37 000" data-price-en="400">$400</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="vtuber_full">Fullbody</span>
+                                <span class="price-amount" data-price-ru="55 500" data-price-en="600">$600</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="vtuber_chibi">Chibi</span>
+                                <span class="price-amount" data-price-ru="32 400" data-price-en="350">$350</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="vtuber_mascot">Mascot</span>
+                                <span class="price-amount" data-price-ru="9 300" data-price-en="100">$100</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="vtuber_assets">Assets</span>
+                                <span class="price-amount" data-i18n="ask">Ask</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PNG Models -->
+            <!-- PNG Models (NEW LAYOUT) -->
             <div class="pricing-category">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -251,22 +264,33 @@
                     </svg>
                     PNG Models
                 </h3>
-                <div class="pricing-image-banner">
-                    <img src="images/png-models.png" loading="lazy">
-                </div>
-                <div class="pricing-list compact">
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="png_half">Halfbody</span>
-                        <span class="price-amount" data-price-ru="6 500" data-price-en="70">$70</span>
+                
+                <div class="product-showcase">
+                    <div class="showcase-slider">
+                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <div class="slider-track">
+                            <div class="slide-item"><img src="images/png-models.png" alt="PNG Model Example" loading="lazy"></div>
+                        </div>
+                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
                     </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="png_full">Fullbody</span>
-                        <span class="price-amount" data-price-ru="8 400" data-price-en="90">$90</span>
+
+                    <div class="showcase-info">
+                        <p>Static PNG models for VTube Studio or overlays.</p>
+                        <div class="price-list">
+                            <div class="price-row">
+                                <span data-i18n="png_half">Halfbody</span>
+                                <span class="price-amount" data-price-ru="6 500" data-price-en="70">$70</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="png_full">Fullbody</span>
+                                <span class="price-amount" data-price-ru="8 400" data-price-en="90">$90</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Animated PNG -->
+            <!-- Animated PNG (NEW LAYOUT) -->
             <div class="pricing-category">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -275,22 +299,33 @@
                     </svg>
                     Animated PNG Models
                 </h3>
-                <div class="pricing-image-banner">
-                    <img src="images/animated-png.gif" loading="lazy">
-                </div>
-                <div class="pricing-list compact">
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="apng_half">Halfbody</span>
-                        <span class="price-amount" data-price-ru="9 300" data-price-en="100">$100</span>
+                
+                <div class="product-showcase">
+                    <div class="showcase-slider">
+                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <div class="slider-track">
+                            <div class="slide-item"><img src="images/animated-png.gif" alt="APNG Example" loading="lazy"></div>
+                        </div>
+                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
                     </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="apng_full">Fullbody</span>
-                        <span class="price-amount" data-price-ru="11 100" data-price-en="120">$120</span>
+
+                    <div class="showcase-info">
+                        <p>Looping animations for your avatar.</p>
+                        <div class="price-list">
+                            <div class="price-row">
+                                <span data-i18n="apng_half">Halfbody</span>
+                                <span class="price-amount" data-price-ru="9 300" data-price-en="100">$100</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="apng_full">Fullbody</span>
+                                <span class="price-amount" data-price-ru="11 100" data-price-en="120">$120</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Emoji -->
+            <!-- Emoji (NEW LAYOUT) -->
             <div class="pricing-category">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -301,28 +336,35 @@
                     </svg>
                     Emoji
                 </h3>
-                <div class="pricing-image-banner">
-                    <img src="images/png-emoji.gif" loading="lazy">
-                </div>
-                <div class="pricing-image-banner">
-                    <img src="images/png-emoji2.jpg" loading="lazy">
-                </div>
-                <div class="pricing-image-banner">
-                    <img src="images/png-emoji3.jpg" loading="lazy">
-                </div>
-                <div class="pricing-list compact">
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="emoji_png">PNG Emoji</span>
-                        <span class="price-amount" data-price-ru="2 300" data-price-en="25">$25</span>
+                
+                <div class="product-showcase">
+                    <div class="showcase-slider">
+                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <div class="slider-track">
+                            <div class="slide-item"><img src="images/png-emoji.gif" alt="Emoji 1" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/png-emoji2.jpg" alt="Emoji 2" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/png-emoji3.jpg" alt="Emoji 3" loading="lazy"></div>
+                        </div>
+                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
                     </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="emoji_frame">Frame by Frame</span>
-                        <span class="price-amount" data-price-ru="3 700+" data-price-en="40+">$40+</span>
+
+                    <div class="showcase-info">
+                        <p>Custom emotes for Twitch, Discord, and YouTube.</p>
+                        <div class="price-list">
+                            <div class="price-row">
+                                <span data-i18n="emoji_png">PNG Emoji</span>
+                                <span class="price-amount" data-price-ru="2 300" data-price-en="25">$25</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="emoji_frame">Frame by Frame</span>
+                                <span class="price-amount" data-price-ru="3 700+" data-price-en="40+">$40+</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Animated Background -->
+            <!-- Animated Background (NEW LAYOUT) -->
             <div class="pricing-category">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -332,35 +374,42 @@
                     </svg>
                     Animated Background
                 </h3>
-                <div class="pricing-image-banner">
-                    <img src="images/animated-bg.gif" loading="lazy">
-                </div>
-                                <div class="pricing-image-banner">
-                    <img src="images/animated-bg2.gif" loading="lazy">
-                </div>
-                                <div class="pricing-image-banner">
-                    <img src="images/animated-bg3.gif" loading="lazy">
-                </div>
-                <div class="pricing-list compact">
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="anim_bg_detailed">Detailed Background</span>
-                        <span class="price-amount" data-price-ru="29 600+" data-price-en="320+">$320+</span>
+                
+                <div class="product-showcase">
+                    <div class="showcase-slider">
+                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <div class="slider-track">
+                            <div class="slide-item"><img src="images/animated-bg.gif" alt="BG 1" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/animated-bg2.gif" alt="BG 2" loading="lazy"></div>
+                            <div class="slide-item"><img src="images/animated-bg3.gif" alt="BG 3" loading="lazy"></div>
+                        </div>
+                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
                     </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="anim_bg_simple">Simple Background</span>
-                        <span class="price-amount" data-price-ru="18 500+" data-price-en="200+">$200+</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="anim_head">Animated Headshot +</span>
-                        <span class="price-amount" data-price-ru="6 500+" data-price-en="70+">$70+</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="anim_half">Animated Halfbody +</span>
-                        <span class="price-amount" data-price-ru="8 800+" data-price-en="95+">$95+</span>
-                    </div>
-                    <div class="price-item-compact">
-                        <span class="price-name" data-i18n="anim_full">Animated Fullbody +</span>
-                        <span class="price-amount" data-price-ru="11 100+" data-price-en="120+">$120+</span>
+
+                    <div class="showcase-info">
+                        <p>Dynamic backgrounds for streams and videos.</p>
+                        <div class="price-list">
+                            <div class="price-row">
+                                <span data-i18n="anim_bg_detailed">Detailed Background</span>
+                                <span class="price-amount" data-price-ru="29 600+" data-price-en="320+">$320+</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="anim_bg_simple">Simple Background</span>
+                                <span class="price-amount" data-price-ru="18 500+" data-price-en="200+">$200+</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="anim_head">Animated Headshot +</span>
+                                <span class="price-amount" data-price-ru="6 500+" data-price-en="70+">$70+</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="anim_half">Animated Halfbody +</span>
+                                <span class="price-amount" data-price-ru="8 800+" data-price-en="95+">$95+</span>
+                            </div>
+                            <div class="price-row">
+                                <span data-i18n="anim_full">Animated Fullbody +</span>
+                                <span class="price-amount" data-price-ru="11 100+" data-price-en="120+">$120+</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

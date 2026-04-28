@@ -104,12 +104,6 @@ const translations = {
 
 let currentLang = 'ru';
 let domCache = {};
-let sliderState = {
-    currentIndex: 0,
-    isDragging: false,
-    startX: 0,
-    scrollLeft: 0
-};
 
 function cacheDOM() {
     domCache = {
@@ -148,6 +142,7 @@ function closeLightbox() {
 document.addEventListener('DOMContentLoaded', () => {
     cacheDOM();
     initGallerySlider();
+    initProductSliders(); // Инициализация слайдеров для товаров (VTuber и др.)
     initLanguage();
     initNav();
     initLightbox();
@@ -159,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 }, { once: true });
 
-// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР
+// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР (ГЛАВНАЯ)
 function initGallerySlider() {
     const track = domCache.galleryTrack;
     const container = domCache.galleryContainer;
@@ -179,72 +174,101 @@ function initGallerySlider() {
                 <div class="slide-title">${item.title}</div>
             </div>
         `;
-        // Клик по картинке внутри слайда
         slide.querySelector('img').addEventListener('click', (e) => {
             e.stopPropagation();
             openLightbox(item.src);
         });
-        // Клик по всему слайду тоже открывает
         slide.addEventListener('click', () => openLightbox(item.src));
         fragment.appendChild(slide);
     });
     track.appendChild(fragment);
 
-    // Навигация кнопками
-    const updateSliderPosition = () => {
-        const slideWidth = container.querySelector('.gallery-slide')?.offsetWidth || 300;
-        const gap = 20; // Отступ между слайдами
-        track.style.transform = `translateX(-${sliderState.currentIndex * (slideWidth + gap)}px)`;
+    setupSliderLogic(container, track, prevBtn, nextBtn);
+}
+
+// 🛍️ СЛАЙДЕРЫ ДЛЯ ТОВАРОВ (VTuber, PNG и т.д.)
+function initProductSliders() {
+    // Находим все контейнеры товаров, где есть галерея
+    const showcases = document.querySelectorAll('.product-showcase');
+    
+    showcases.forEach(showcase => {
+        const track = showcase.querySelector('.slider-track');
+        const prevBtn = showcase.querySelector('.slider-prev');
+        const nextBtn = showcase.querySelector('.slider-next');
+        
+        if (track && (prevBtn || nextBtn)) {
+            setupSliderLogic(track.parentElement || showcase, track, prevBtn, nextBtn);
+            
+            // Добавляем обработчики кликов для картинок внутри слайдера товара
+            track.querySelectorAll('img').forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openLightbox(img.src);
+                });
+            });
+        }
+    });
+}
+
+// Общая логика слайдера (кнопки + свайп)
+function setupSliderLogic(container, track, prevBtn, nextBtn) {
+    let isDragging = false;
+    let startPos = 0;
+    let scrollLeft = 0;
+    let animationFrameId;
+
+    const getSlideWidth = () => {
+        const slide = track.querySelector('.slide-item, .gallery-slide, img');
+        return slide ? slide.clientWidth + 20 : 300; // 20px отступ
     };
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (sliderState.currentIndex > 0) {
-                sliderState.currentIndex--;
-                updateSliderPosition();
-            }
+    const scrollBySlide = (direction) => {
+        const slideWidth = getSlideWidth();
+        const scrollAmount = slideWidth * direction;
+        
+        track.scrollTo({
+            left: track.scrollLeft + scrollAmount,
+            behavior: 'smooth'
         });
-    }
+    };
 
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            const maxIndex = galleryData.length - 1;
-            if (sliderState.currentIndex < maxIndex) {
-                sliderState.currentIndex++;
-                updateSliderPosition();
-            }
-        });
-    }
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollBySlide(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollBySlide(1));
 
-    // Drag & Drop свайп мышкой
-    container.addEventListener('mousedown', (e) => {
-        sliderState.isDragging = true;
-        sliderState.startX = e.pageX - container.offsetLeft;
-        sliderState.scrollLeft = container.scrollLeft;
-        container.style.cursor = 'grabbing';
-    });
+    // События мыши/тача для свайпа
+    const startDrag = (e) => {
+        isDragging = true;
+        startPos = e.pageX || e.touches[0].pageX;
+        scrollLeft = track.scrollLeft;
+        track.style.cursor = 'grabbing';
+        track.style.scrollBehavior = 'auto'; // Отключаем плавность для драга
+    };
 
-    container.addEventListener('mouseleave', () => {
-        sliderState.isDragging = false;
-        container.style.cursor = 'grab';
-    });
+    const endDrag = () => {
+        isDragging = false;
+        track.style.cursor = 'grab';
+        track.style.scrollBehavior = 'smooth';
+    };
 
-    container.addEventListener('mouseup', () => {
-        sliderState.isDragging = false;
-        container.style.cursor = 'grab';
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (!sliderState.isDragging) return;
+    const moveDrag = (e) => {
+        if (!isDragging) return;
         e.preventDefault();
-        const x = e.pageX - container.offsetLeft;
-        const walk = (x - sliderState.startX) * 2; // Скорость скролла
-        // Для простоты здесь можно добавить логику пересчета индекса, 
-        // но пока оставим нативный скролл или трансформ через кнопки для стабильности
-    });
-    
-    // Обновление позиции при ресайзе
-    window.addEventListener('resize', updateSliderPosition);
+        const x = e.pageX || e.touches[0].pageX;
+        const walk = (x - startPos) * 2;
+        track.scrollLeft = scrollLeft - walk;
+    };
+
+    // Mouse events
+    container.addEventListener('mousedown', startDrag);
+    container.addEventListener('mouseleave', endDrag);
+    container.addEventListener('mouseup', endDrag);
+    container.addEventListener('mousemove', moveDrag);
+
+    // Touch events
+    container.addEventListener('touchstart', startDrag, { passive: true });
+    container.addEventListener('touchend', endDrag);
+    container.addEventListener('touchmove', moveDrag, { passive: false });
 }
 
 // Обработчики для всех изображений на сайте
@@ -266,21 +290,25 @@ function addAllImageHandlers() {
         });
     });
     
-    // Карточки товаров
+    // Карточки товаров (если не в слайдере)
     document.querySelectorAll('.price-img img').forEach(img => {
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openLightbox(img.src);
-        });
+        if (!img.closest('.slider-track')) { // Пропускаем те, что уже в слайдере
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openLightbox(img.src);
+            });
+        }
     });
     
     document.querySelectorAll('.price-img').forEach(container => {
-        container.style.cursor = 'pointer';
-        container.addEventListener('click', () => {
-            const img = container.querySelector('img');
-            if (img) openLightbox(img.src);
-        });
+        if (!container.querySelector('.slider-track')) {
+            container.style.cursor = 'pointer';
+            container.addEventListener('click', () => {
+                const img = container.querySelector('img');
+                if (img) openLightbox(img.src);
+            });
+        }
     });
     
     // Hero и About
@@ -367,7 +395,6 @@ function initLightbox() {
     let isDragging = false;
     let startX, startY;
 
-    // Сброс трансформации при открытии
     const resetTransform = () => {
         scale = 1;
         translateX = 0;
@@ -402,6 +429,7 @@ function initLightbox() {
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
         img.style.cursor = 'grabbing';
+        e.stopPropagation(); // Чтобы не срабатывал клик по лайтбоксу
     });
 
     window.addEventListener('mousemove', (e) => {
