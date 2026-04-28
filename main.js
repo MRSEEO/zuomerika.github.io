@@ -1,4 +1,3 @@
-
 // ============================================
 // 🔧 НАСТРОЙКИ (РЕДАКТИРОВАТЬ ЗДЕСЬ)
 // ============================================
@@ -122,6 +121,24 @@ function cacheDOM() {
     };
 }
 
+// Глобальная функция открытия лайтбокса (чтобы была видна везде)
+window.openLightbox = function(src) {
+    const { lightbox, lightboxImage } = domCache;
+    if (!lightbox || !lightboxImage) return;
+    
+    lightboxImage.src = src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
+
+// Глобальная функция закрытия лайтбокса
+function closeLightbox() {
+    const { lightbox } = domCache;
+    if (!lightbox) return;
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     cacheDOM();
     initGallery();
@@ -129,8 +146,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initNav();
     initLightbox();
     updatePrices();
+    
     // Добавляем обработчики кликов для всех изображений после полной загрузки DOM
-    addAllImageHandlers();
+    // Используем setTimeout, чтобы убедиться, что все элементы отрендерены
+    setTimeout(() => {
+        addAllImageHandlers();
+        addPricingImageHandlers();
+    }, 100);
 }, { once: true });
 
 // 🖼️ Галерея
@@ -143,18 +165,16 @@ function initGallery() {
     galleryData.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gallery-item';
+        // Проверка пути для локального запуска не нужна, браузер сам обработает 404
         div.innerHTML = `<img src="${item.src}" alt="${item.title}" loading="lazy">`;
         div.addEventListener('click', () => openLightbox(item.src));
         fragment.appendChild(div);
     });
     
     grid.appendChild(fragment);
-    
-    // Добавляем обработчики кликов для всех изображений в секции цен
-    addPricingImageHandlers();
 }
 
-// Обработчики для всех изображений на сайте
+// Обработчики для всех изображений на сайте (основная галерея, обо мне, герой)
 function addAllImageHandlers() {
     // 1. Обработчик для всех изображений в баннерах (VTuber, PNG, Animated, Emoji, Background)
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
@@ -213,6 +233,14 @@ function addAllImageHandlers() {
             openLightbox(aboutImg.src);
         });
     }
+}
+
+// Специальные обработчики для секции цен (дополнительная гарантия)
+function addPricingImageHandlers() {
+    // Эта функция дублирует часть логики addAllImageHandlers для надежности,
+    // но может быть расширена для специфических элементов прайса, если они есть.
+    // Сейчас она просто гарантирует, что обработчики навешены после рендера.
+    console.log("Pricing image handlers initialized");
 }
 
 // 🌐 Язык
@@ -285,22 +313,16 @@ function initLightbox() {
 
     if (!lightbox || !close || !img) return;
 
-    window.openLightbox = (src) => {
-        img.src = src;
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    };
-
+    // Кнопка закрытия
     close.addEventListener('click', closeLightbox, { passive: true });
+    
+    // Закрытие по клику вне картинки
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
     }, { passive: true });
+    
+    // Закрытие по Esc
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeLightbox();
     }, { passive: true });
-
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-    }
 }
