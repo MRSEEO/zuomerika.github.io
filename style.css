@@ -4,18 +4,18 @@ body {
 
 /* ===== VARIABLES ===== */
 :root {
-    --bg-primary: #F5D7B1;
-    --bg-secondary: #E8C99E;
-    --bg-card: #F9F3E8;
-    --text-primary: #3D2B1F;
-    --text-muted: #7A5C42;
-    --accent-pink: #C4794A;
+    --bg-primary: #b88359;
+    --bg-secondary: #D4C0A0;
+    --bg-card: #fdead5;
+    --text-primary: #6e5a16;
+    --text-muted: #8B7355;
+    --accent-pink: #D4856B;
     --accent-peach: #E89F5D;
-    --accent-mint: #D4A574;
-    --cta: #A66D3F;
-    --white: #F5F5F0;
-    --shadow: rgba(61, 43, 31, 0.1);
-    --shadow-hover: rgba(61, 43, 31, 0.2);
+    --accent-mint: #C9A87C;
+    --cta: #f1e5bd;
+    --white: #faf5eb;
+    --shadow: rgba(47, 37, 32, 0.1);
+    --shadow-hover: rgba(47, 37, 32, 0.2);
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 10px;
@@ -34,17 +34,31 @@ html {
 
 body {
     font-family: 'Quicksand', sans-serif;
-    background-color: var(--bg-primary);
-    background-image: 
-        radial-gradient(var(--accent-peach) 1px, transparent 1px),
-        radial-gradient(var(--accent-pink) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-position: 0 0, 20px 20px;
     color: var(--text-primary);
     line-height: 1.7;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* --- НАСТРОЙКИ ФОНА --- */
+    
+    /* 1. Цвет подложки (если картинка не загрузится) */
+    background-color: var(--bg-primary); 
+    
+    /* 2. Путь к вашей картинке */
+    background-image: url('images/background.png'); 
+    
+    /* 3. Растягиваем на весь экран, сохраняя пропорции (cover обрезает края, contain показывает целиком) */
+    background-size: cover; 
+    
+    /* 4. Центрируем изображение */
+    background-position: center center; 
+    
+    /* 5. Фиксируем фон при прокрутке (красивый эффект параллакса) */
+    background-attachment: fixed; 
+    
+    /* 6. Повторять только если картинка маленькая (лучше no-repeat) */
+    background-repeat: no-repeat;
 }
 
 /* Оптимизация производительности анимаций */
@@ -96,7 +110,7 @@ button {
     left: 0;
     width: 100%;
     padding: 16px 0;
-    background: rgba(255, 249, 240, 0.95);
+    background: #462c1f;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: 1000;
