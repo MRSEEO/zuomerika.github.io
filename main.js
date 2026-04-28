@@ -147,6 +147,24 @@ function initGallery() {
     });
     
     grid.appendChild(fragment);
+    
+    // Добавляем обработчики кликов для изображений в секции цен
+    document.querySelectorAll('.pricing-image-banner img').forEach(img => {
+        img.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openLightbox(img.src);
+        });
+    });
+    
+    // Обработчик для контейнеров баннеров
+    document.querySelectorAll('.pricing-image-banner').forEach(banner => {
+        banner.addEventListener('click', () => {
+            const img = banner.querySelector('img');
+            if (img) {
+                openLightbox(img.src);
+            }
+        });
+    });
 }
 
 // 🌐 Язык
