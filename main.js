@@ -2,7 +2,7 @@
 // 🔧 НАСТРОЙКИ (РЕДАКТИРОВАТЬ ЗДЕСЬ)
 // ============================================
 
-// 🖼️ ГАЛЕРЕЯ
+// 🖼️ ГАЛЕРЕЯ (СЛАЙДЕР)
 const galleryData = [
     { src: "images/hero.jpg", title: "Hero Art" },
     { src: "images/about.jpg", title: "About Art" },
@@ -21,7 +21,7 @@ const translations = {
         about_title: "Обо мне",
         about_text: "Я создаю иллюстрации в аниме-стиле. Люблю работать с персонажами, создавать тёплые и атмосферные работы. Принимаю заказы на портреты, арты для игр, VTuber-модели и личные проекты.",
         gallery_title: "Мои работы",
-        gallery_subtitle: "Подборка работ",
+        gallery_subtitle: "Листайте работы",
         pricing_title: "Цены",
         pricing_notice: "* Цены указаны от минимальной. Итоговая стоимость зависит от сложности запроса.",
         nsfw_notice: "NSFW — x2 к стоимости",
@@ -63,7 +63,7 @@ const translations = {
         about_title: "About Me",
         about_text: "I create illustrations in anime style. I love working with characters, creating warm and atmospheric artworks. Accepting orders for portraits, game art, VTuber models and personal projects.",
         gallery_title: "My Works",
-        gallery_subtitle: "A selection of artworks",
+        gallery_subtitle: "Swipe to view works",
         pricing_title: "Pricing",
         pricing_notice: "* Prices are starting from shown. Final cost depends on complexity of your request.",
         nsfw_notice: "NSFW — x2 to pricing",
@@ -103,9 +103,13 @@ const translations = {
 // ============================================
 
 let currentLang = 'ru';
-
-// Кэширование DOM элементов
 let domCache = {};
+let sliderState = {
+    currentIndex: 0,
+    isDragging: false,
+    startX: 0,
+    scrollLeft: 0
+};
 
 function cacheDOM() {
     domCache = {
@@ -114,14 +118,17 @@ function cacheDOM() {
         langBtns: document.querySelectorAll('.lang-btn'),
         i18nElements: document.querySelectorAll('[data-i18n]'),
         priceElements: document.querySelectorAll('.price-amount'),
-        galleryGrid: document.getElementById('galleryGrid'),
+        galleryTrack: document.getElementById('galleryTrack'),
+        galleryContainer: document.getElementById('galleryContainer'),
+        prevBtn: document.getElementById('galleryPrev'),
+        nextBtn: document.getElementById('galleryNext'),
         lightbox: document.getElementById('lightbox'),
         lightboxClose: document.getElementById('lightboxClose'),
         lightboxImage: document.getElementById('lightboxImage')
     };
 }
 
-// Глобальная функция открытия лайтбокса (чтобы была видна везде)
+// Глобальная функция открытия лайтбокса
 window.openLightbox = function(src) {
     const { lightbox, lightboxImage } = domCache;
     if (!lightbox || !lightboxImage) return;
@@ -131,7 +138,6 @@ window.openLightbox = function(src) {
     document.body.style.overflow = 'hidden';
 };
 
-// Глобальная функция закрытия лайтбокса
 function closeLightbox() {
     const { lightbox } = domCache;
     if (!lightbox) return;
@@ -141,42 +147,109 @@ function closeLightbox() {
 
 document.addEventListener('DOMContentLoaded', () => {
     cacheDOM();
-    initGallery();
+    initGallerySlider();
     initLanguage();
     initNav();
     initLightbox();
     updatePrices();
     
-    // Добавляем обработчики кликов для всех изображений после полной загрузки DOM
-    // Используем setTimeout, чтобы убедиться, что все элементы отрендерены
     setTimeout(() => {
         addAllImageHandlers();
         addPricingImageHandlers();
     }, 100);
 }, { once: true });
 
-// 🖼️ Галерея
-function initGallery() {
-    const grid = domCache.galleryGrid;
-    if (!grid) return;
-    
+// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР
+function initGallerySlider() {
+    const track = domCache.galleryTrack;
+    const container = domCache.galleryContainer;
+    const prevBtn = domCache.prevBtn;
+    const nextBtn = domCache.nextBtn;
+
+    if (!track || !container) return;
+
+    // Рендер слайдов
     const fragment = document.createDocumentFragment();
-    
-    galleryData.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'gallery-item';
-        // Проверка пути для локального запуска не нужна, браузер сам обработает 404
-        div.innerHTML = `<img src="${item.src}" alt="${item.title}" loading="lazy">`;
-        div.addEventListener('click', () => openLightbox(item.src));
-        fragment.appendChild(div);
+    galleryData.forEach((item, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'gallery-slide';
+        slide.innerHTML = `
+            <div class="slide-content">
+                <img src="${item.src}" alt="${item.title}" loading="lazy">
+                <div class="slide-title">${item.title}</div>
+            </div>
+        `;
+        // Клик по картинке внутри слайда
+        slide.querySelector('img').addEventListener('click', (e) => {
+            e.stopPropagation();
+            openLightbox(item.src);
+        });
+        // Клик по всему слайду тоже открывает
+        slide.addEventListener('click', () => openLightbox(item.src));
+        fragment.appendChild(slide);
+    });
+    track.appendChild(fragment);
+
+    // Навигация кнопками
+    const updateSliderPosition = () => {
+        const slideWidth = container.querySelector('.gallery-slide')?.offsetWidth || 300;
+        const gap = 20; // Отступ между слайдами
+        track.style.transform = `translateX(-${sliderState.currentIndex * (slideWidth + gap)}px)`;
+    };
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (sliderState.currentIndex > 0) {
+                sliderState.currentIndex--;
+                updateSliderPosition();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            const maxIndex = galleryData.length - 1;
+            if (sliderState.currentIndex < maxIndex) {
+                sliderState.currentIndex++;
+                updateSliderPosition();
+            }
+        });
+    }
+
+    // Drag & Drop свайп мышкой
+    container.addEventListener('mousedown', (e) => {
+        sliderState.isDragging = true;
+        sliderState.startX = e.pageX - container.offsetLeft;
+        sliderState.scrollLeft = container.scrollLeft;
+        container.style.cursor = 'grabbing';
+    });
+
+    container.addEventListener('mouseleave', () => {
+        sliderState.isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    container.addEventListener('mouseup', () => {
+        sliderState.isDragging = false;
+        container.style.cursor = 'grab';
+    });
+
+    container.addEventListener('mousemove', (e) => {
+        if (!sliderState.isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - sliderState.startX) * 2; // Скорость скролла
+        // Для простоты здесь можно добавить логику пересчета индекса, 
+        // но пока оставим нативный скролл или трансформ через кнопки для стабильности
     });
     
-    grid.appendChild(fragment);
+    // Обновление позиции при ресайзе
+    window.addEventListener('resize', updateSliderPosition);
 }
 
-// Обработчики для всех изображений на сайте (основная галерея, обо мне, герой)
+// Обработчики для всех изображений на сайте
 function addAllImageHandlers() {
-    // 1. Обработчик для всех изображений в баннерах (VTuber, PNG, Animated, Emoji, Background)
+    // Баннеры прайса
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -185,18 +258,15 @@ function addAllImageHandlers() {
         });
     });
     
-    // 2. Обработчик для контейнеров баннеров
     document.querySelectorAll('.pricing-image-banner').forEach(banner => {
         banner.style.cursor = 'pointer';
         banner.addEventListener('click', () => {
             const img = banner.querySelector('img');
-            if (img) {
-                openLightbox(img.src);
-            }
+            if (img) openLightbox(img.src);
         });
     });
     
-    // 3. Обработчик для изображений в карточках товаров (headshot, halfbody, fullbody)
+    // Карточки товаров
     document.querySelectorAll('.price-img img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -205,42 +275,30 @@ function addAllImageHandlers() {
         });
     });
     
-    // 4. Обработчик для контейнеров price-img
     document.querySelectorAll('.price-img').forEach(container => {
         container.style.cursor = 'pointer';
         container.addEventListener('click', () => {
             const img = container.querySelector('img');
-            if (img) {
-                openLightbox(img.src);
-            }
+            if (img) openLightbox(img.src);
         });
     });
     
-    // 5. Обработчик для hero изображения
+    // Hero и About
     const heroImg = document.querySelector('.hero-image img');
     if (heroImg) {
         heroImg.style.cursor = 'pointer';
-        heroImg.addEventListener('click', () => {
-            openLightbox(heroImg.src);
-        });
+        heroImg.addEventListener('click', () => openLightbox(heroImg.src));
     }
     
-    // 6. Обработчик для about изображения
     const aboutImg = document.querySelector('.about-image img');
     if (aboutImg) {
         aboutImg.style.cursor = 'pointer';
-        aboutImg.addEventListener('click', () => {
-            openLightbox(aboutImg.src);
-        });
+        aboutImg.addEventListener('click', () => openLightbox(aboutImg.src));
     }
 }
 
-// Специальные обработчики для секции цен (дополнительная гарантия)
 function addPricingImageHandlers() {
-    // Эта функция дублирует часть логики addAllImageHandlers для надежности,
-    // но может быть расширена для специфических элементов прайса, если они есть.
-    // Сейчас она просто гарантирует, что обработчики навешены после рендера.
-    console.log("Pricing image handlers initialized");
+    console.log("Pricing handlers ready");
 }
 
 // 🌐 Язык
@@ -271,9 +329,7 @@ function updatePrices() {
         const priceRu = el.dataset.priceRu;
         const priceEn = el.dataset.priceEn;
         const price = currentLang === 'ru' ? priceRu : priceEn;
-        if (price) {
-            el.textContent = price;
-        }
+        if (price) el.textContent = price;
     });
 }
 
@@ -281,27 +337,19 @@ function updatePrices() {
 function initNav() {
     const menu = domCache.navMenu;
     const toggle = domCache.mobileToggle;
-
     if (!toggle || !menu) return;
 
-    toggle.addEventListener('click', () => {
-        menu.classList.toggle('active');
-    }, { passive: true });
-
+    toggle.addEventListener('click', () => menu.classList.toggle('active'));
     menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menu.classList.remove('active');
-        }, { passive: true });
+        link.addEventListener('click', () => menu.classList.remove('active'));
     });
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }, { passive: false });
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     });
 }
 
@@ -313,169 +361,78 @@ function initLightbox() {
 
     if (!lightbox || !close || !img) return;
 
-    // Кнопка закрытия
-    close.addEventListener('click', closeLightbox, { passive: true });
-    
-    // Закрытие по клику вне картинки
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
-    }, { passive: true });
-    
-    // Закрытие по Esc
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeLightbox();
-    }, { passive: true });
-}
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX, startY;
 
-
-// 🔍 Lightbox с зумом
-let currentScale = 1;
-let isDragging = false;
-let startX, startY, translateX = 0, translateY = 0;
-
-function initLightbox() {
-    const lightbox = domCache.lightbox;
-    const close = domCache.lightboxClose;
-    const img = domCache.lightboxImage;
-    const imgContainer = lightbox.querySelector('.lightbox-content') || lightbox; // Контейнер для трансформации
-
-    if (!lightbox || !close || !img) return;
-
-    // Сброс состояния при открытии
-    window.openLightbox = function(src) {
-        currentScale = 1;
+    // Сброс трансформации при открытии
+    const resetTransform = () => {
+        scale = 1;
         translateX = 0;
         translateY = 0;
-        updateTransform();
-        
-        img.src = src;
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+        img.style.cursor = 'zoom-in';
     };
 
-    // Кнопка закрытия
-    close.addEventListener('click', closeLightbox, { passive: true });
-    
-    // Закрытие по клику вне картинки
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target === imgContainer) closeLightbox();
-    }, { passive: true });
-    
-    // Закрытие по Esc
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeLightbox();
-    }, { passive: true });
-
-    // Зум колесиком мыши
+    // Зум колесиком
     lightbox.addEventListener('wheel', (e) => {
         e.preventDefault();
+        const delta = e.deltaY * -0.001;
+        const newScale = Math.min(Math.max(1, scale + delta), 5);
         
-        const zoomSpeed = 0.1;
-        const delta = e.deltaY > 0 ? -zoomSpeed : zoomSpeed;
-        
-        let newScale = currentScale + delta;
-        // Ограничения зума
-        newScale = Math.max(0.5, Math.min(newScale, 5)); 
-        
-        currentScale = newScale;
-        
-        // Если уменьшаем до 1 или меньше, сбрасываем позицию в центр
-        if (currentScale <= 1) {
-            currentScale = 1;
+        if (newScale > 1) {
+            scale = newScale;
+            img.style.cursor = 'grab';
+        } else {
+            scale = 1;
             translateX = 0;
             translateY = 0;
+            img.style.cursor = 'zoom-in';
         }
         
-        updateTransform();
+        img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
     }, { passive: false });
 
-    // Перетаскивание (Pan)
+    // Перетаскивание увеличенного изображения
     img.addEventListener('mousedown', (e) => {
-        if (currentScale <= 1) return; // Не перетаскивать, если не увеличено
+        if (scale <= 1) return;
         isDragging = true;
         startX = e.clientX - translateX;
         startY = e.clientY - translateY;
         img.style.cursor = 'grabbing';
     });
 
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging || currentScale <= 1) return;
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging || scale <= 1) return;
         e.preventDefault();
         translateX = e.clientX - startX;
         translateY = e.clientY - startY;
-        updateTransform();
+        img.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
     });
 
-    document.addEventListener('mouseup', () => {
+    window.addEventListener('mouseup', () => {
         isDragging = false;
-        if (img) img.style.cursor = 'zoom-in';
+        if (scale > 1) img.style.cursor = 'grab';
     });
 
-    // Поддержка тач-событий для мобильных
-    let initialPinchDistance = null;
-
-    img.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-            isDragging = true;
-            startX = e.touches[0].clientX - translateX;
-            startY = e.touches[0].clientY - translateY;
-        } else if (e.touches.length === 2) {
-            initialPinchDistance = getDistance(e.touches);
-        }
-    }, { passive: true });
-
-    img.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 1 && isDragging && currentScale > 1) {
-            e.preventDefault(); // Предотвращаем скролл страницы при перетаскивании
-            translateX = e.touches[0].clientX - startX;
-            translateY = e.touches[0].clientY - startY;
-            updateTransform();
-        } else if (e.touches.length === 2 && initialPinchDistance) {
-            e.preventDefault();
-            const currentDistance = getDistance(e.touches);
-            const diff = currentDistance - initialPinchDistance;
-            
-            let newScale = currentScale + (diff * 0.005);
-            newScale = Math.max(0.5, Math.min(newScale, 5));
-            
-            if (newScale <= 1) {
-                currentScale = 1;
-                translateX = 0;
-                translateY = 0;
-            } else {
-                currentScale = newScale;
-            }
-            updateTransform();
-        }
-    }, { passive: false });
-
-    img.addEventListener('touchend', () => {
-        isDragging = false;
-        initialPinchDistance = null;
+    close.addEventListener('click', () => {
+        resetTransform();
+        closeLightbox();
     });
 
-    function updateTransform() {
-        img.style.transformOrigin = 'center center';
-        img.style.transition = isDragging ? 'none' : 'transform 0.2s ease';
-        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-    }
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            resetTransform();
+            closeLightbox();
+        }
+    });
 
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-        // Сброс трансформаций после закрытия
-        setTimeout(() => {
-            currentScale = 1;
-            translateX = 0;
-            translateY = 0;
-            img.style.transform = 'none';
-        }, 200);
-    }
-}
-
-// Вспомогательная функция для расчета расстояния между двумя точками (для пинча)
-function getDistance(touches) {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            resetTransform();
+            closeLightbox();
+        }
+    });
 }

@@ -710,3 +710,109 @@ section {
     }
 }
 
+/* Стили для слайдера галереи */
+#galleryContainer {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+#galleryTrack {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    padding: 10px;
+    will-change: transform;
+}
+
+.gallery-slide {
+    flex: 0 0 auto;
+    width: 300px; /* Ширина слайда */
+    height: 400px; /* Высота слайда */
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1a1a1a;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-slide:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
+
+.slide-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Заполняет слайд, обрезая лишнее, но сохраняя пропорции */
+    display: block;
+}
+
+.slide-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 15px 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-slide:hover .slide-title {
+    opacity: 1;
+}
+
+/* Кнопки навигации слайдера */
+.gallery-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.gallery-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.1);
+}
+
+#galleryPrev { left: 10px; }
+#galleryNext { right: 10px; }
+
+/* Адаптив для слайдера */
+@media (max-width: 768px) {
+    .gallery-slide {
+        width: 260px;
+        height: 340px;
+    }
+    .gallery-nav-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+}
