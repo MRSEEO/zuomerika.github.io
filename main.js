@@ -5,10 +5,10 @@
 
 // 🖼️ ГАЛЕРЕЯ
 const galleryData = [
-    { src: "images/gallery1.jpg", title: "Work 1" },
-    { src: "images/gallery2.jpg", title: "Work 2" },
-    { src: "images/gallery3.jpg", title: "Work 3" },
-    { src: "images/gallery4.jpg", title: "Work 4" }
+    { src: "images/hero.jpg", title: "Hero Art" },
+    { src: "images/about.jpg", title: "About Art" },
+    { src: "images/sketch-full.jpg", title: "Sketch Work" },
+    { src: "images/render-full.jpg", title: "Rendered Work" }
 ];
 
 // 🌐 ПЕРЕВОДЫ
