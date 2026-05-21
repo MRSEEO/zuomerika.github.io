@@ -4,15 +4,14 @@ body {
 
 /* ===== VARIABLES ===== */
 :root {
-    /* Основные цвета для "коричневого" варианта */
-    --bg-body: #FDF5E6;      /* Бежевый фон всей страницы */
-    --bg-card: #FFFFFF;      /* Белый фон карточек */
-    --bg-secondary: #D4C0A0; /* Светло-коричневый для второстепенных элементов */
-    --text-primary: #4E342E; /* Коричневый цвет основного текста */
-    --text-muted: #8B7355;   /* Приглушённый коричневый */
-    --accent: #C17A5A;       /* Персиково-коричневый акцент (вместо розового) */
-    --button-bg: #4E342E;    /* Тёмный фон для кнопок с ценами */
-    --white: #FFFFFF;        /* Белый цвет */
+    --bg-body: #FDF5E6;
+    --bg-card: #FFFFFF;
+    --bg-secondary: #D4C0A0;
+    --text-primary: #4E342E;
+    --text-muted: #8B7355;
+    --accent: #C17A5A;
+    --button-bg: #4E342E;
+    --white: #FFFFFF;
     --shadow: rgba(47, 37, 32, 0.1);
     --shadow-hover: rgba(47, 37, 32, 0.2);
     --radius-lg: 24px;
@@ -32,35 +31,26 @@ html {
 }
 
 body {
-    font-family: 'Quicksand', sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     color: var(--text-primary);
     line-height: 1.7;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    
-    /* --- НАСТРОЙКИ ФОНА --- */
-    
-    /* 1. Цвет подложки (если картинка не загрузится) */
-    background-color: var(--bg-primary); 
-    
-    /* 2. Путь к вашей картинке */
-    background-image: url('images/background.png'); 
-    
-    /* 3. Растягиваем на весь экран, сохраняя пропорции (cover обрезает края, contain показывает целиком) */
-    background-size: cover; 
-    
-    /* 4. Центрируем изображение */
-    background-position: center center; 
-    
-    /* 5. Фиксируем фон при прокрутке (красивый эффект параллакса) */
-    background-attachment: fixed; 
-    
-    /* 6. Повторять только если картинка маленькая (лучше no-repeat) */
+    background-color: var(--bg-body);
+    background-image: url('images/background.png');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
     background-repeat: no-repeat;
 }
 
-/* Оптимизация производительности анимаций */
+@media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
@@ -73,8 +63,8 @@ body {
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 500;
+    font-family: 'Comfortaa', sans-serif;
+    font-weight: 700;
 }
 
 img {
@@ -109,7 +99,7 @@ button {
     left: 0;
     width: 100%;
     padding: 16px 0;
-    background: var(--button-bg); /* Тёмный фон навигации */
+    background: var(--button-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: 1000;
@@ -123,10 +113,10 @@ button {
 }
 
 .nav-logo {
-    font-family: 'Fredoka', sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     font-size: 1.4rem;
     font-weight: 600;
-    color: var(--white); /* Белый логотип */
+    color: var(--white);
 }
 
 .nav-menu {
@@ -136,15 +126,16 @@ button {
 }
 
 .nav-menu a {
+    font-family: 'Comfortaa', sans-serif; /* Явное наследование шрифта */
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     opacity: 0.9;
-    color: var(--white); /* Белые ссылки в меню */
+    color: var(--white);
 }
 
 .nav-menu a:hover {
     opacity: 1;
-    color: var(--accent); /* Акцентный цвет при наведении */
+    color: var(--accent);
 }
 
 .nav-actions {
@@ -169,6 +160,7 @@ button {
     opacity: 0.6;
     transition: 0.3s ease;
     color: var(--text-primary);
+    font-family: 'Comfortaa', sans-serif;
 }
 
 .lang-btn.active {
@@ -186,88 +178,25 @@ button {
 .mobile-toggle span {
     width: 24px;
     height: 3px;
-    background: var(--white); /* Белые полоски бургер-меню */
+    background: var(--white);
     border-radius: 3px;
 }
 
-/* ===== HERO ===== */
+/* ===== HERO (теперь только фон) ===== */
 .hero {
-    min-height: 100vh;
+    min-height: 60vh; /* Уменьшили, так как контента нет */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 100px 0 60px;
+    padding: 100px 0 20px;
+    /* Можно оставить для визуала, но без картинки */
 }
 
 .hero-content {
     text-align: center;
 }
 
-.hero-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: var(--accent); /* Персиковый фон */
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: var(--white); /* Белый текст */
-}
-
-.hero-title {
-    font-family: 'Fredoka', sans-serif;
-    font-size: clamp(2.5rem, 8vw, 4rem);
-    margin-bottom: 12px;
-    color: var(--text-primary); /* Коричневый заголовок */
-}
-
-.hero-subtitle {
-    font-size: 1rem;
-    color: var(--text-muted);
-    margin-bottom: 30px;
-}
-
-.hero-image {
-    max-width: 380px;
-    margin: 30px auto 0;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: 0 20px 50px var(--shadow);
-    border: 4px solid var(--white);
-}
-
-/* ===== SECTIONS ===== */
-section {
-    padding: 80px 0;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-.section-header h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: var(--text-primary); /* Коричневый заголовок */
-}
-
-.section-header p {
-    color: var(--text-muted);
-}
-
-.pricing-notice {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 10px;
-}
-
-.pricing-notice.nsfw {
-    color: var(--accent); /* Акцентный цвет */
-    font-weight: 600;
-}
-
-/* ===== ABOUT ===== */
+/* ===== ABOUT (с перенесённым контентом) ===== */
 .about {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -298,12 +227,37 @@ section {
 .about-text h2 {
     font-size: 1.8rem;
     margin-bottom: 16px;
-    color: var(--text-primary); /* Коричневый заголовок */
+    color: var(--text-primary);
 }
 
 .about-text p {
     color: var(--text-muted);
     line-height: 1.9;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--accent);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--white);
+}
+
+.hero-title {
+    font-family: 'Comfortaa', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
     margin-bottom: 20px;
 }
 
@@ -323,12 +277,58 @@ section {
     color: var(--text-primary);
 }
 
+/* ===== GALLERY SECTION ===== */
+.gallery-section {
+    padding: 80px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: var(--white);
+}
+
+.gallery-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.gallery-links a {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--bg-secondary);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: 0.3s ease;
+}
+
+.gallery-links a:hover {
+    background: var(--accent);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
 /* ===== GALLERY SLIDER ===== */
 #galleryContainer {
     position: relative;
     width: 100%;
     overflow: hidden;
     padding: 20px 0;
+    cursor: grab;
+}
+
+#galleryContainer:active {
+    cursor: grabbing;
 }
 
 #galleryTrack {
@@ -346,9 +346,10 @@ section {
     border-radius: 12px;
     overflow: hidden;
     background: #1a1a1a;
-    cursor: pointer;
+    cursor: pointer !important; /* весь слайд кликабельный */
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
 .gallery-slide:hover {
@@ -369,20 +370,48 @@ section {
     display: block;
 }
 
-.slide-title {
+/* Название категории внизу, красиво */
+.slide-label {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 40px 15px 15px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     color: white;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    pointer-events: none; /* клик проходит сквозь на слайд */
     text-align: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    z-index: 2;
+    white-space: nowrap;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
+
+.gallery-slide:hover .slide-label {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateX(-50%) scale(1.05);
+}
+
+/* Убираем overlay, кнопки, категории — они больше не нужны */
+.slide-overlay, .slide-btn, .slide-category {
+    display: none !important;
+}
+
+/* Удаляем курсор grab у контейнера (он не нужен) */
+#galleryContainer {
+    cursor: default;
+}
+#galleryContainer:active {
+    cursor: default;
+}
+
 
 .gallery-slide:hover .slide-title {
     opacity: 1;
@@ -413,15 +442,25 @@ section {
     transform: translateY(-50%) scale(1.1);
 }
 
+.gallery-nav-btn.hidden {
+    display: none;
+}
+
 #galleryPrev { left: 10px; }
 #galleryNext { right: 10px; }
 
 /* ===== PRICING & PRODUCT SHOWCASE ===== */
 .pricing {
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.35); /* полупрозрачный белый */
+    backdrop-filter: blur(5px);          /* блюрим фон за карточкой */
+    -webkit-backdrop-filter: blur(14px);
     border-radius: var(--radius-lg);
-    margin: 40px 24px;
-    padding: 60px 40px !important;
+    max-width: 1100px;
+    width: 100%;
+    margin: 40px auto;                    /* отступы по вертикали, по горизонтали авто */
+    padding: 30px 24px !important;        /* уменьшили верхний отступ с 60px до 30px, боковые с 40px до 24px */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* лёгкая рамка для красоты */
+    box-sizing: border-box;
 }
 
 .pricing-category {
@@ -432,12 +471,39 @@ section {
     box-shadow: 0 8px 25px var(--shadow);
 }
 
+.pricing-notice-wrapper {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 30px;
+    padding: 16px 32px;
+    margin: 0 auto 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.pricing-notice {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.pricing-notice.nsfw {
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 4px;
+}
+
 .category-title {
-    font-size: 1.3rem;
+    font-size: 1.7rem;
     margin-bottom: 24px;
-    color: var(--text-primary); /* Коричневый заголовок */
+    color: var(--text-primary);
     padding-bottom: 16px;
-    border-bottom: 2px dashed var(--accent); /* Акцентная линия */
+    border-bottom: 2px dashed var(--accent);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -447,7 +513,7 @@ section {
     width: 24px;
     height: 24px;
     flex-shrink: 0;
-    color: var(--accent); /* Акцентный цвет иконки */
+    color: var(--accent);
 }
 
 .product-showcase {
@@ -526,6 +592,10 @@ section {
     transform: translateY(-50%) scale(1.1);
 }
 
+.slider-nav.hidden {
+    display: none;
+}
+
 .slider-nav.prev { left: 10px; }
 .slider-nav.next { right: 10px; }
 
@@ -545,7 +615,7 @@ section {
 
 .showcase-info p {
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 1.35rem;
     line-height: 1.6;
 }
 
@@ -556,16 +626,15 @@ section {
     margin-top: 10px;
 }
 
-/* ===== КНОПКИ ЦЕН (ГЛАВНОЕ ИЗМЕНЕНИЕ) ===== */
 .price-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px; /* Чуть больше отступов */
-    background: var(--button-bg); /* Тёмный фон */
+    padding: 12px 16px;
+    background: var(--button-bg);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
-    color: var(--white); /* Белый текст */
+    color: var(--white);
 }
 
 .price-row span:first-child {
@@ -573,12 +642,11 @@ section {
 }
 
 .price-amount {
-    font-family: 'Fredoka', sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     font-weight: 600;
-    color: var(--white); /* Белая цена */
+    color: var(--white);
 }
 
-/* Старые стили прайсинга (для обратной совместимости) */
 .pricing-image-banner {
     width: 100%;
     border-radius: var(--radius-md);
@@ -610,13 +678,12 @@ section {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
-/* Стили для карточек товаров (Sketch, Lineart и т.д.) */
 .price-item {
     display: flex;
     gap: 20px;
     align-items: center;
     padding: 20px;
-    background: var(--bg-secondary); /* Светло-бежевый фон */
+    background: var(--bg-secondary);
     border-radius: var(--radius-md);
     transition: 0.3s ease;
 }
@@ -658,7 +725,7 @@ section {
     font-weight: 600;
     text-align: center;
     padding: 4px;
-    color: var(--text-primary); /* Темный текст на картинке */
+    color: var(--text-primary);
 }
 
 .price-value {
@@ -667,7 +734,7 @@ section {
 }
 
 .price-item .price-amount {
-    color: var(--text-primary); /* Коричневый цвет цены для обычных товаров */
+    color: var(--text-primary);
 }
 
 .price-item-compact {
@@ -698,9 +765,14 @@ section {
     margin-top: 20px;
     padding-top: 20px;
     border-top: 2px dashed var(--accent);
-    font-size: 0.9rem;
+    font-size: 1.35rem;
     color: var(--text-muted);
     flex-wrap: wrap;
+    font-weight: 500;
+}
+
+.bg-option span {
+    padding: 4px 0;
 }
 
 /* Payment Info */
@@ -723,7 +795,7 @@ section {
 }
 
 .payment-link {
-    color: var(--accent); /* Акцентный цвет ссылки */
+    color: var(--accent);
     font-weight: 600;
     text-decoration: underline;
 }
@@ -753,7 +825,7 @@ section {
 }
 
 .contact-email {
-    font-family: 'Fredoka', sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     font-size: 1.3rem;
     color: var(--text-primary);
     margin: 20px 0;
@@ -805,6 +877,46 @@ section {
 .footer-copyright {
     font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+/* ===== КНОПКА НАВЕРХ ===== */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    z-index: 900;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+    background: var(--button-bg);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.scroll-to-top svg {
+    width: 28px;
+    height: 28px;
 }
 
 /* ===== LIGHTBOX ===== */
@@ -882,6 +994,11 @@ section {
         padding: 40px 24px !important;
     }
 
+    .hero {
+        min-height: 20vh;
+        padding: 80px 0 10px;
+    }
+
     .hero-title {
         font-size: 2.2rem;
     }
@@ -927,5 +1044,17 @@ section {
         width: 32px;
         height: 32px;
         font-size: 1rem;
+    }
+
+    .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+    }
+    
+    .scroll-to-top svg {
+        width: 24px;
+        height: 24px;
     }
 }

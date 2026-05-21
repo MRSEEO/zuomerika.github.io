@@ -2,15 +2,19 @@
 // 🔧 НАСТРОЙКИ (РЕДАКТИРОВАТЬ ЗДЕСЬ)
 // ============================================
 
-// 🖼️ ГАЛЕРЕЯ (СЛАЙДЕР)
+// 🖼️ ГАЛЕРЕЯ (теперь каждый слайд ведёт к категории)
 const galleryData = [
-    { src: "images/hero.jpg", title: "Hero Art" },
-    { src: "images/about.jpg", title: "About Art" },
-    { src: "images/sketch-full.jpg", title: "Sketch Work" },
-    { src: "images/render-full.jpg", title: "Rendered Work" }
+    { src: "images/sketch-head.jpg", category: "Sketches", target: "#sketches" },
+    { src: "images/line-head.png", category: "Clean Lineart", target: "#lineart" },
+    { src: "images/render-head.jpg", category: "Fully Rendered", target: "#rendered" },
+    { src: "images/vtuber-banner.jpg", category: "VTuber Models", target: "#vtuber" },
+    { src: "images/png-models.png", category: "PNG Models", target: "#png" },
+    { src: "images/animated-png.gif", category: "Animated PNG", target: "#apng" },
+    { src: "images/png-emoji.gif", category: "Emoji", target: "#emoji" },
+    { src: "images/animated-bg.gif", category: "Animated Background", target: "#animated-bg" }
 ];
 
-// 🌐 ПЕРЕВОДЫ
+// 🌐 ПЕРЕВОДЫ (убран знак $ из английских текстов, чтобы не дублировался)
 const translations = {
     ru: {
         nav_about: "Обо мне",
@@ -21,7 +25,6 @@ const translations = {
         about_title: "Обо мне",
         about_text: "Я создаю иллюстрации в аниме-стиле. Люблю работать с персонажами, создавать тёплые и атмосферные работы. Принимаю заказы на портреты, арты для игр, VTuber-модели и личные проекты.",
         gallery_title: "Мои работы",
-        gallery_subtitle: "Листайте работы",
         pricing_title: "Цены",
         pricing_notice: "* Цены указаны от минимальной. Итоговая стоимость зависит от сложности запроса.",
         nsfw_notice: "NSFW — x2 к стоимости",
@@ -29,8 +32,8 @@ const translations = {
         halfbody: "Halfbody",
         fullbody: "Fullbody",
         bg_simple: "Simple Background — Free",
-        bg_complex: "Complex Background +$10",
-        bg_complex_line: "Complex Background +$20",
+        bg_complex: "Complex Background +10",
+        bg_complex_line: "Complex Background +20",
         vtuber_half: "Halfbody",
         vtuber_full: "Fullbody",
         vtuber_chibi: "Chibi",
@@ -49,7 +52,7 @@ const translations = {
         anim_full: "Animated Fullbody +",
         ask: "Ask",
         payment_title: "Payment",
-        payment_text: "I take payment via ",
+        payment_text_prefix: "Я принимаю оплату через ",
         payment_plans: "Payment plans are okay!",
         contact_title: "Контакты",
         footer_copyright: "© 2026 Zuomerika. All rights reserved"
@@ -63,7 +66,6 @@ const translations = {
         about_title: "About Me",
         about_text: "I create illustrations in anime style. I love working with characters, creating warm and atmospheric artworks. Accepting orders for portraits, game art, VTuber models and personal projects.",
         gallery_title: "My Works",
-        gallery_subtitle: "Swipe to view works",
         pricing_title: "Pricing",
         pricing_notice: "* Prices are starting from shown. Final cost depends on complexity of your request.",
         nsfw_notice: "NSFW — x2 to pricing",
@@ -71,8 +73,8 @@ const translations = {
         halfbody: "Halfbody",
         fullbody: "Fullbody",
         bg_simple: "Simple Background — Free",
-        bg_complex: "Complex Background +$10",
-        bg_complex_line: "Complex Background +$20",
+        bg_complex: "Complex Background +10",
+        bg_complex_line: "Complex Background +20",
         vtuber_half: "Halfbody",
         vtuber_full: "Fullbody",
         vtuber_chibi: "Chibi",
@@ -91,7 +93,7 @@ const translations = {
         anim_full: "Animated Fullbody +",
         ask: "Ask",
         payment_title: "Payment",
-        payment_text: "I take payment via ",
+        payment_text_prefix: "I take payment via ",
         payment_plans: "Payment plans are okay!",
         contact_title: "Contact",
         footer_copyright: "© 2026 Zuomerika. All rights reserved"
@@ -105,10 +107,8 @@ const translations = {
 let currentLang = 'ru';
 let domCache = {};
 let sliderState = {
-    currentIndex: 0,
-    isDragging: false,
-    startX: 0,
-    scrollLeft: 0
+    currentIndex: 0
+    // isDragging, startX и т.д. удалены — они не нужны
 };
 
 function cacheDOM() {
@@ -124,7 +124,8 @@ function cacheDOM() {
         nextBtn: document.getElementById('galleryNext'),
         lightbox: document.getElementById('lightbox'),
         lightboxClose: document.getElementById('lightboxClose'),
-        lightboxImage: document.getElementById('lightboxImage')
+        lightboxImage: document.getElementById('lightboxImage'),
+        scrollBtn: document.getElementById('scrollToTop')
     };
 }
 
@@ -161,20 +162,17 @@ window.moveSlide = function(btn, direction) {
 
 document.addEventListener('DOMContentLoaded', () => {
     cacheDOM();
-    initGallerySlider();
-    initProductSliders(); // Инициализация слайдеров в товарах
+    initGallerySlider();          // переписан
+    initProductSliders();         // переписан (убраны драг и колёсико)
     initLanguage();
     initNav();
     initLightbox();
+    initScrollToTop();
     updatePrices();
-    
-    setTimeout(() => {
-        addAllImageHandlers();
-        addPricingImageHandlers();
-    }, 100);
+    setupImageClickHandlers();
 }, { once: true });
 
-// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР (ИСПРАВЛЕННАЯ)
+// 🖼️ ГАЛЕРЕЯ-СЛАЙДЕР (ТОЛЬКО КНОПКИ, КЛИК ПО КАРТИНКЕ → ПЕРЕХОД)
 function initGallerySlider() {
     const track = domCache.galleryTrack;
     const container = domCache.galleryContainer;
@@ -185,34 +183,51 @@ function initGallerySlider() {
 
     // Рендер слайдов
     const fragment = document.createDocumentFragment();
-    galleryData.forEach((item, index) => {
+    galleryData.forEach((item) => {
         const slide = document.createElement('div');
         slide.className = 'gallery-slide';
         slide.innerHTML = `
             <div class="slide-content">
-                <img src="${item.src}" alt="${item.title}" loading="lazy">
-                <div class="slide-title">${item.title}</div>
+                <img src="${item.src}" alt="${item.category}" loading="lazy">
+                <div class="slide-label">${item.category}</div>
             </div>
         `;
-        // Клик по картинке внутри слайда
-        slide.querySelector('img').addEventListener('click', (e) => {
-            e.stopPropagation();
-            openLightbox(item.src);
+
+        // Клик по всему слайду — переход к категории (лайтбокс отключён)
+        slide.addEventListener('click', () => {
+            const target = document.querySelector(item.target);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
-        // Клик по всему слайду тоже открывает
-        slide.addEventListener('click', () => openLightbox(item.src));
+
         fragment.appendChild(slide);
     });
     track.appendChild(fragment);
 
     // Функция обновления позиции
-    const updateSliderPosition = () => {
+    const updateSliderPosition = (animate = true) => {
         const slides = track.querySelectorAll('.gallery-slide');
         if (slides.length === 0) return;
         
         const slideWidth = slides[0].offsetWidth;
         const gap = 20; 
-        track.style.transform = `translateX(-${sliderState.currentIndex * (slideWidth + gap)}px)`;
+        const newTranslateX = -sliderState.currentIndex * (slideWidth + gap);
+        
+        if (animate) {
+            track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        } else {
+            track.style.transition = 'none';
+        }
+        track.style.transform = `translateX(${newTranslateX}px)`;
+
+        // Видимость кнопок
+        if (prevBtn) {
+            prevBtn.classList.toggle('hidden', sliderState.currentIndex === 0);
+        }
+        if (nextBtn) {
+            nextBtn.classList.toggle('hidden', sliderState.currentIndex === slides.length - 1);
+        }
     };
 
     // Навигация кнопками
@@ -235,69 +250,11 @@ function initGallerySlider() {
         });
     }
 
-    // --- ИСПРАВЛЕННЫЙ DRAG & DROP ---
-    container.addEventListener('mousedown', (e) => {
-        sliderState.isDragging = true;
-        sliderState.startX = e.pageX - container.offsetLeft;
-        sliderState.scrollLeft = container.scrollLeft;
-        container.style.cursor = 'grabbing';
-        track.style.transition = 'none'; // Отключаем плавность для мгновенной реакции
-    });
-
-    container.addEventListener('mouseleave', () => {
-        sliderState.isDragging = false;
-        container.style.cursor = 'grab';
-        track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    });
-
-    container.addEventListener('mouseup', () => {
-        sliderState.isDragging = false;
-        container.style.cursor = 'grab';
-        track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        
-        // Вычисляем новый индекс после отпускания
-        const slides = track.querySelectorAll('.gallery-slide');
-        if (slides.length === 0) return;
-        const slideWidth = slides[0].offsetWidth + 20;
-        const currentScroll = -parseFloat(getComputedStyle(track).transform.split(',')[4]) || 0;
-        sliderState.currentIndex = Math.round(currentScroll / slideWidth);
-        
-        // Ограничиваем индекс
-        if (sliderState.currentIndex < 0) sliderState.currentIndex = 0;
-        if (sliderState.currentIndex > galleryData.length - 1) sliderState.currentIndex = galleryData.length - 1;
-        
-        updateSliderPosition();
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (!sliderState.isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - container.offsetLeft;
-        const walk = (x - sliderState.startX) * 2; // Скорость скролла
-        
-        // Двигаем трек напрямую через transform для производительности
-        const slides = track.querySelectorAll('.gallery-slide');
-        if (slides.length === 0) return;
-        const slideWidth = slides[0].offsetWidth + 20;
-        const basePosition = sliderState.currentIndex * (slideWidth);
-        
-        // Это временное смещение во время драга
-        // Но так как у нас логика на индексах, проще двигать scrollLeft контейнера или использовать другой подход.
-        // Для простоты и надежности в данной реализации:
-        // Мы просто позволяем браузеру скроллить, если бы это был обычный скролл, 
-        // но так как у нас transform, нам нужно эмулировать это.
-        
-        // Упрощенный вариант для transform-слайдера:
-        // Просто меняем текущую позицию относительно старта
-        const currentTransform = -sliderState.currentIndex * (slideWidth);
-        track.style.transform = `translateX(${currentTransform + walk}px)`;
-    });
-    
-    // Обновление позиции при ресайзе
-    window.addEventListener('resize', updateSliderPosition);
+    window.addEventListener('resize', () => updateSliderPosition(false));
+    setTimeout(() => updateSliderPosition(false), 50);
 }
 
-// Инициализация слайдеров в секциях товаров (VTuber, PNG и т.д.)
+// 📦 СЛАЙДЕРЫ ТОВАРОВ (только кнопки)
 function initProductSliders() {
     const sliders = document.querySelectorAll('.showcase-slider');
     
@@ -305,43 +262,28 @@ function initProductSliders() {
         const track = slider.querySelector('.slider-track');
         if (!track) return;
 
-        // Поддержка свайпа мышкой
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        const slides = track.querySelectorAll('.slide-item');
+        const prevBtn = slider.querySelector('.prev');
+        const nextBtn = slider.querySelector('.next');
+        if (slides.length <= 1) {
+            if (prevBtn) prevBtn.classList.add('hidden');
+            if (nextBtn) nextBtn.classList.add('hidden');
+        }
 
-        track.addEventListener('mousedown', (e) => {
-            isDown = true;
-            track.classList.add('active');
-            startX = e.pageX - track.offsetLeft;
-            scrollLeft = track.scrollLeft;
-        });
+        // 👉 ДРАГ И КОЛЁСИКО УДАЛЕНЫ
+        // Оставлены только кнопки prev/next
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+            });
+        }
 
-        track.addEventListener('mouseleave', () => {
-            isDown = false;
-            track.classList.remove('active');
-        });
-
-        track.addEventListener('mouseup', () => {
-            isDown = false;
-            track.classList.remove('active');
-        });
-
-        track.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - track.offsetLeft;
-            const walk = (x - startX) * 2; // Скорость прокрутки
-            track.scrollLeft = scrollLeft - walk;
-        });
-
-        // Поддержка колесика (горизонтальный скролл)
-        track.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            track.scrollLeft += e.deltaY;
-        });
-        
-        // Клик по картинке открывает лайтбокс
+        // Клик по картинке — лайтбокс
         track.querySelectorAll('img').forEach(img => {
             img.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -352,9 +294,8 @@ function initProductSliders() {
     });
 }
 
-// Обработчики для всех изображений на сайте
-function addAllImageHandlers() {
-    // Баннеры прайса
+// Обработчики изображений
+function setupImageClickHandlers() {
     document.querySelectorAll('.pricing-image-banner img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -371,7 +312,6 @@ function addAllImageHandlers() {
         });
     });
     
-    // Карточки товаров
     document.querySelectorAll('.price-img img').forEach(img => {
         img.style.cursor = 'pointer';
         img.addEventListener('click', (e) => {
@@ -388,7 +328,6 @@ function addAllImageHandlers() {
         });
     });
     
-    // Hero и About
     const heroImg = document.querySelector('.hero-image img');
     if (heroImg) {
         heroImg.style.cursor = 'pointer';
@@ -400,10 +339,6 @@ function addAllImageHandlers() {
         aboutImg.style.cursor = 'pointer';
         aboutImg.addEventListener('click', () => openLightbox(aboutImg.src));
     }
-}
-
-function addPricingImageHandlers() {
-    console.log("Pricing handlers ready");
 }
 
 // 🌐 Язык
@@ -429,12 +364,16 @@ function updateLanguage() {
     document.documentElement.lang = currentLang;
 }
 
+// 🔥 ЗДЕСЬ ОСНОВНОЕ ИЗМЕНЕНИЕ: ДОБАВЛЕНЫ ЗНАКИ ВАЛЮТ
 function updatePrices() {
     domCache.priceElements.forEach(el => {
         const priceRu = el.dataset.priceRu;
         const priceEn = el.dataset.priceEn;
-        const price = currentLang === 'ru' ? priceRu : priceEn;
-        if (price) el.textContent = price;
+        let price = currentLang === 'ru' ? priceRu : priceEn;
+        if (price) {
+            const currencySymbol = currentLang === 'ru' ? '₽ ' : '$ ';
+            el.textContent = currencySymbol + price;
+        }
     });
 }
 
@@ -536,5 +475,23 @@ function initLightbox() {
             resetTransform();
             closeLightbox();
         }
+    });
+}
+
+// ⬆️ Кнопка "Наверх"
+function initScrollToTop() {
+    const btn = domCache.scrollBtn;
+    if (!btn) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }

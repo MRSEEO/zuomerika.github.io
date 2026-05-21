@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
 
@@ -23,36 +24,29 @@
                 <li><a href="#contact" data-i18n="nav_contact">Контакты</a></li>
             </ul>
             <div class="nav-actions">
-                <div class="lang-switch">
-                    <button class="lang-btn active" data-lang="ru">RU</button>
-                    <button class="lang-btn" data-lang="en">EN</button>
+                <div class="lang-switch" role="group" aria-label="Переключение языка">
+                    <button class="lang-btn active" data-lang="ru" aria-label="Русский">RU</button>
+                    <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
                 </div>
-                <div class="mobile-toggle" id="mobileToggle">
+                <div class="mobile-toggle" id="mobileToggle" role="button" aria-label="Меню" tabindex="0">
                     <span></span><span></span><span></span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container hero-content">
-            <div class="hero-badge">Commissions Open!</div>
-            <h1 class="hero-title">Zuomerika</h1>
-            <p class="hero-subtitle" data-i18n="hero_subtitle">Digital Artist & Illustrator</p>
-            <div class="hero-image">
-                <img src="images/hero.jpg" fetchpriority="high" loading="eager" alt="Hero Art">
-            </div>
-        </div>
-    </section>
 
-    <!-- About -->
+    <!-- About (с перенесённым контентом) -->
     <section class="about" id="about">
         <div class="container about-content">
             <div class="about-image">
                 <img src="images/about.jpg" loading="lazy" alt="About Zuomerika">
             </div>
             <div class="about-text">
+                <div class="hero-badge">Commissions Open!</div>
+                <h1 class="hero-title">Zuomerika</h1>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">Digital Artist & Illustrator</p>
+                
                 <h2 data-i18n="about_title">About Me</h2>
                 <p data-i18n="about_text">I create illustrations in anime style. I love working with characters, creating warm and atmospheric artworks. Accepting orders for portraits, game art, VTuber models and personal projects.</p>
                 <div class="about-tags">
@@ -65,35 +59,36 @@
         </div>
     </section>
 
-    <!-- Gallery -->
-    <section id="gallery" class="gallery-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 data-i18n="gallery_title">Мои работы</h2>
-                <p class="section-subtitle" data-i18n="gallery_subtitle">Листайте работы</p>
-            </div>
-            
-            <div id="galleryContainer">
-                <button id="galleryPrev" class="gallery-nav-btn">&#10094;</button>
-                <div id="galleryTrack" class="gallery-track">
-                    <!-- Слайды будут добавлены через JS -->
-                </div>
-                <button id="galleryNext" class="gallery-nav-btn">&#10095;</button>
-            </div>
+    <!-- Gallery (слайдер с кнопками переходов) -->
+<section id="gallery" class="gallery-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 data-i18n="gallery_title">Мои работы</h2>
         </div>
-    </section>
+        
+        <div id="galleryContainer">
+            <button id="galleryPrev" class="gallery-nav-btn" aria-label="Предыдущий слайд">&#10094;</button>
+            <div id="galleryTrack" class="gallery-track">
+                <!-- Слайды будут добавлены через JS -->
+            </div>
+            <button id="galleryNext" class="gallery-nav-btn" aria-label="Следующий слайд">&#10095;</button>
+        </div>
+    </div>
+</section>
 
     <!-- Pricing -->
     <section class="pricing" id="pricing">
         <div class="container">
             <div class="section-header">
                 <h2 data-i18n="pricing_title">Pricing</h2>
-                <p class="pricing-notice" data-i18n="pricing_notice">* Prices are starting from shown. Final cost depends on complexity of your request.</p>
-                <p class="pricing-notice nsfw" data-i18n="nsfw_notice">NSFW — x2 to pricing</p>
+                <div class="pricing-notice-wrapper">
+                    <p class="pricing-notice" data-i18n="pricing_notice">* Prices are starting from shown. Final cost depends on complexity of your request.</p>
+                    <p class="pricing-notice nsfw" data-i18n="nsfw_notice">NSFW — x2 to pricing</p>
+                </div>
             </div>
 
             <!-- Sketches -->
-            <div class="pricing-category">
+            <div class="pricing-category" id="sketches">
                 <h3 class="category-title">Sketches (Colored)</h3>
                 <div class="pricing-list">
                     <div class="price-item">
@@ -131,7 +126,7 @@
             </div>
 
             <!-- Clean Lineart -->
-            <div class="pricing-category">
+            <div class="pricing-category" id="lineart">
                 <h3 class="category-title">Clean Lineart</h3>
                 <div class="pricing-list">
                     <div class="price-item">
@@ -169,7 +164,7 @@
             </div>
 
             <!-- Fully Rendered -->
-            <div class="pricing-category">
+            <div class="pricing-category" id="rendered">
                 <h3 class="category-title">Fully Rendered</h3>
                 <div class="pricing-list">
                     <div class="price-item">
@@ -202,8 +197,8 @@
                 </div>
             </div>
 
-            <!-- VTuber Models (NEW LAYOUT) -->
-            <div class="pricing-category">
+            <!-- VTuber Models -->
+            <div class="pricing-category" id="vtuber">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -214,18 +209,16 @@
                 </h3>
                 
                 <div class="product-showcase">
-                    <!-- Slider Left -->
                     <div class="showcase-slider">
-                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <button class="slider-nav prev" aria-label="Предыдущий слайд">&#10094;</button>
                         <div class="slider-track">
                             <div class="slide-item"><img src="images/vtuber-banner.jpg" alt="VTuber Example 1" loading="lazy"></div>
                             <div class="slide-item"><img src="images/vtuber-banner2.jpg" alt="VTuber Example 2" loading="lazy"></div>
                             <div class="slide-item"><img src="images/vtuber-banner3.png" alt="VTuber Example 3" loading="lazy"></div>
                         </div>
-                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
+                        <button class="slider-nav next" aria-label="Следующий слайд">&#10095;</button>
                     </div>
 
-                    <!-- Info Right -->
                     <div class="showcase-info">
                         <p>Custom VTuber models designed for streaming and content creation.</p>
                         <div class="price-list">
@@ -254,8 +247,8 @@
                 </div>
             </div>
 
-            <!-- PNG Models (NEW LAYOUT) -->
-            <div class="pricing-category">
+            <!-- PNG Models -->
+            <div class="pricing-category" id="png">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -267,11 +260,11 @@
                 
                 <div class="product-showcase">
                     <div class="showcase-slider">
-                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <button class="slider-nav prev" aria-label="Предыдущий слайд">&#10094;</button>
                         <div class="slider-track">
                             <div class="slide-item"><img src="images/png-models.png" alt="PNG Model Example" loading="lazy"></div>
                         </div>
-                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
+                        <button class="slider-nav next" aria-label="Следующий слайд">&#10095;</button>
                     </div>
 
                     <div class="showcase-info">
@@ -290,8 +283,8 @@
                 </div>
             </div>
 
-            <!-- Animated PNG (NEW LAYOUT) -->
-            <div class="pricing-category">
+            <!-- Animated PNG -->
+            <div class="pricing-category" id="apng">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
@@ -302,11 +295,11 @@
                 
                 <div class="product-showcase">
                     <div class="showcase-slider">
-                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <button class="slider-nav prev" aria-label="Предыдущий слайд">&#10094;</button>
                         <div class="slider-track">
                             <div class="slide-item"><img src="images/animated-png.gif" alt="APNG Example" loading="lazy"></div>
                         </div>
-                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
+                        <button class="slider-nav next" aria-label="Следующий слайд">&#10095;</button>
                     </div>
 
                     <div class="showcase-info">
@@ -325,8 +318,8 @@
                 </div>
             </div>
 
-            <!-- Emoji (NEW LAYOUT) -->
-            <div class="pricing-category">
+            <!-- Emoji -->
+            <div class="pricing-category" id="emoji">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
@@ -339,13 +332,13 @@
                 
                 <div class="product-showcase">
                     <div class="showcase-slider">
-                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <button class="slider-nav prev" aria-label="Предыдущий слайд">&#10094;</button>
                         <div class="slider-track">
                             <div class="slide-item"><img src="images/png-emoji.gif" alt="Emoji 1" loading="lazy"></div>
                             <div class="slide-item"><img src="images/png-emoji2.jpg" alt="Emoji 2" loading="lazy"></div>
                             <div class="slide-item"><img src="images/png-emoji3.jpg" alt="Emoji 3" loading="lazy"></div>
                         </div>
-                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
+                        <button class="slider-nav next" aria-label="Следующий слайд">&#10095;</button>
                     </div>
 
                     <div class="showcase-info">
@@ -364,8 +357,8 @@
                 </div>
             </div>
 
-            <!-- Animated Background (NEW LAYOUT) -->
-            <div class="pricing-category">
+            <!-- Animated Background -->
+            <div class="pricing-category" id="animated-bg">
                 <h3 class="category-title">
                     <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -377,13 +370,13 @@
                 
                 <div class="product-showcase">
                     <div class="showcase-slider">
-                        <button class="slider-nav prev" onclick="moveSlide(this, -1)">&#10094;</button>
+                        <button class="slider-nav prev" aria-label="Предыдущий слайд">&#10094;</button>
                         <div class="slider-track">
                             <div class="slide-item"><img src="images/animated-bg.gif" alt="BG 1" loading="lazy"></div>
                             <div class="slide-item"><img src="images/animated-bg2.gif" alt="BG 2" loading="lazy"></div>
                             <div class="slide-item"><img src="images/animated-bg3.gif" alt="BG 3" loading="lazy"></div>
                         </div>
-                        <button class="slider-nav next" onclick="moveSlide(this, 1)">&#10095;</button>
+                        <button class="slider-nav next" aria-label="Следующий слайд">&#10095;</button>
                     </div>
 
                     <div class="showcase-info">
@@ -417,7 +410,10 @@
             <!-- Payment Info -->
             <div class="payment-info">
                 <h3 data-i18n="payment_title">Payment</h3>
-                <p data-i18n="payment_text">I take payment via <a href="https://hipolink.net/zuomerika" target="_blank" class="payment-link">Hipolink Invoice</a></p>
+                <p>
+                    <span data-i18n="payment_text_prefix">I take payment via </span>
+                    <a href="https://hipolink.net/zuomerika" target="_blank" class="payment-link">Hipolink Invoice</a>
+                </p>
                 <p data-i18n="payment_plans">Payment plans are okay!</p>
             </div>
         </div>
@@ -429,19 +425,19 @@
             <h2 data-i18n="contact_title">Contact</h2>
             <a href="mailto:zuomerika@example.com" class="contact-email">zuomerika@example.com</a>
             <div class="social-links">
-                <a href="#" class="social-link" title="Telegram">
+                <a href="#" class="social-link" title="Telegram" aria-label="Telegram">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.44-.42-1.38-.88.03-.24.37-.49 1.03-.75 4.04-1.76 6.74-2.92 8.09-3.48 3.85-1.6 4.64-1.89 5.17-1.9.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.13-.03.27z"/>
                     </svg>
                     Telegram
                 </a>
-                <a href="#" class="social-link" title="Discord">
+                <a href="#" class="social-link" title="Discord" aria-label="Discord">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
                     </svg>
                     Discord
                 </a>
-                <a href="#" class="social-link" title="Twitter">
+                <a href="#" class="social-link" title="Twitter" aria-label="Twitter">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
@@ -458,9 +454,16 @@
         </div>
     </footer>
 
+    <!-- Кнопка "Наверх" -->
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Прокрутить наверх" title="Наверх">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+    </button>
+
     <!-- Lightbox -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
+        <span class="lightbox-close" id="lightboxClose" role="button" aria-label="Закрыть">&times;</span>
         <img src="" alt="Artwork" id="lightboxImage">
     </div>
 
